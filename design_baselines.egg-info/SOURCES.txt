@@ -1,0 +1,8 @@
+README.md
+setup.py
+design_baselines.egg-info/PKG-INFO
+design_baselines.egg-info/SOURCES.txt
+design_baselines.egg-info/dependency_links.txt
+design_baselines.egg-info/entry_points.txt
+design_baselines.egg-info/top_level.txt
+design_baselines.egg-info/zip-safe
