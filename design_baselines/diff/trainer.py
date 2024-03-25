@@ -30,7 +30,7 @@ with suppress_output():
 
     from design_bench.datasets.discrete.tf_bind_8_dataset import TFBind8Dataset
     from design_bench.datasets.discrete.tf_bind_10_dataset import TFBind10Dataset
-    # from design_bench.datasets.discrete.cifar_nas_dataset import CIFARNASDataset
+    from design_bench.datasets.discrete.nas_bench_dataset import NASBenchDataset
     from design_bench.datasets.discrete.chembl_dataset import ChEMBLDataset
 
     from design_bench.datasets.continuous.ant_morphology_dataset import AntMorphologyDataset
