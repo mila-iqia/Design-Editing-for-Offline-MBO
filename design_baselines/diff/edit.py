@@ -321,17 +321,17 @@ def run_evaluate(
         # This is a hyperparameter to trade off between the source distribution and the target distribution
         # See SDEdit paper for more details
         t_ = torch.tensor([0.2]).expand(num_samples).view(-1, 1)
-        x_hat, target, std, g = target_model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)
-        xs = [x_hat]
-
-        # xs= heun_sampler(model,
-        #                   x_hat,
-        #                   y_,
-        #                   num_steps,
-        #                   start_step=800,
-        #                   end_step=1000,
-        #                   lmbd=lmbd,
-        #                   keep_all_samples=True)
+        x_hat, target, std, g = target_model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
+        # xs = [x_hat]
+        # Denoise again
+        xs = heun_sampler(model,
+                          x_hat,
+                          y_,
+                          num_steps,
+                          start_step=800,
+                          end_step=1000,
+                          lmbd=lmbd,
+                          keep_all_samples=True)
 
         ctr = 0
         for qqq in xs:
