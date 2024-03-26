@@ -150,7 +150,7 @@ if __name__ == "__main__":
     parser.add_argument('--wd', default=0.0, type=float)
     # grad ascent to obtain design
     parser.add_argument('--Tmax', default=100, type=int)  # Usually 100 for discrete tasks and 200 for continuous tasks
-    parser.add_argument('--ft_lr', default=1e-1, type=float)
+    parser.add_argument('--ft_lr', default=1e-1, type=float)  # Usually 1e-1 for discrete tasks and 1e-3 for continuous tasks
     parser.add_argument('--topk', default=1000, type=int)
     parser.add_argument('--interval', default=100, type=int)
     parser.add_argument('--method', choices=['ensemble', 'simple'], type=str, default='simple')
@@ -159,4 +159,7 @@ if __name__ == "__main__":
     parser.add_argument('--seed3', default=100, type=int)
     parser.add_argument('--store_path', default="generated_target_dist/", type=str)
     args = parser.parse_args()
-    experiment()
+    if args.mode == 'train':
+        train_proxy(args)
+    elif args.mode == 'design':
+        design_opt(args)
