@@ -1,0 +1,8 @@
+Score matching loss
+torch.Size([512, 60])
+GT ys: 5.205519676208496
+normalise
+Max Score:  0.92829436
+Median Score:  0.60330415
+(512, 60)
+(512, 1)
