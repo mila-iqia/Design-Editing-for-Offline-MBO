@@ -186,7 +186,8 @@ def run_evaluate(
     seed,
     hidden_size,
     learning_rate,
-    checkpoint_path,
+    source_checkpoint_path,
+    target_checkpoint_path,
     args,
     wandb_logger=None,
     device=None,
@@ -218,7 +219,18 @@ def run_evaluate(
     else:
         print("Score matching loss")
         model = DiffusionScore.load_from_checkpoint(
-            checkpoint_path=checkpoint_path,
+            checkpoint_path=source_checkpoint_path,
+            taskname=taskname,
+            task=task,
+            learning_rate=args.learning_rate,
+            hidden_size=args.hidden_size,
+            vtype=args.vtype,
+            beta_min=args.beta_min,
+            beta_max=args.beta_max,
+            T0=args.T0,
+            dropout_p=args.dropout_p)
+        target_model = DiffusionScore.load_from_checkpoint(
+            checkpoint_path=target_checkpoint_path,
             taskname=taskname,
             task=task,
             learning_rate=args.learning_rate,
@@ -231,6 +243,8 @@ def run_evaluate(
 
     model = model.to(device)
     model.eval()
+    target_model = target_model.to(device)
+    target_model.eval()
 
     def heun_sampler(sde, x_0, ya, num_steps, start_step=0, end_step=None, lmbd=0., keep_all_samples=True):
         device = sde.gen_sde.T.device
@@ -291,6 +305,7 @@ def run_evaluate(
                               task.x.shape[-1] * task.x.shape[-2],
                               device=device)  # init from prior
 
+        # Generate a sample from the source distribution
         y_ = torch.ones(num_samples).to(device) * args.condition
         xs_base = heun_sampler(model,
                           x_0,
@@ -300,10 +315,13 @@ def run_evaluate(
                           end_step=1000,
                           lmbd=lmbd,
                           keep_all_samples=True)
-        
+
+        # Editing towards the target distribution
         xs_base = xs_base[-1]
+        # This is a hyperparameter to trade off between the source distribution and the target distribution
+        # See SDEdit paper for more details
         t_ = torch.tensor([0.2]).expand(num_samples).view(-1, 1)
-        x_hat, target, std, g = model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)
+        x_hat, target, std, g = target_model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)
         xs = [x_hat]
 
         # xs= heun_sampler(model,
@@ -535,6 +553,12 @@ if __name__ == "__main__":
         required=False,
         default=20.0,
     )
+    parser.add_argument(
+        "--target_checkpoint_path",
+        type=str,
+        required=True,
+        help="Path to the target model checkpoint",
+    )
     args = parser.parse_args()
 
     wandb_project = "score-matching " if args.score_matching else "sde-flow"
@@ -548,13 +572,13 @@ if __name__ == "__main__":
     if args.mode == 'eval':
         checkpoint_path = os.path.join(
             expt_save_path, "wandb/latest-run/files/checkpoints/last.ckpt")
-        checkpoint_path = "/uac/gds/xju22/workspace/ddom/experiments/superconductor/score_diffusion/123/wandb/offline-run-20240320_142141-rnxsck8t/files/checkpoints/last.ckpt"
         run_evaluate(taskname=args.task,
                      seed=args.seed,
                      hidden_size=args.hidden_size,
                      args=args,
                      learning_rate=args.learning_rate,
-                     checkpoint_path=checkpoint_path,
+                     source_checkpoint_path=checkpoint_path,
+                     target_checkpoint_path=args.target_checkpoint_path,
                      device=device,
                      normalise_x=args.normalise_x,
                      normalise_y=args.normalise_y)

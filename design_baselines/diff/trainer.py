@@ -159,9 +159,63 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
     return train_dataset, val_dataset
 
 
+def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None, temp=None):
+    length = task.y.shape[0]
+    shuffle_idx = np.arange(length)
+    shuffle_idx = np.random.shuffle(shuffle_idx)
+
+    if task.is_discrete:
+        task.map_to_logits()
+        x = task.x[shuffle_idx]
+        x = x.reshape(x.shape[1:])
+        x = x.reshape(x.shape[0], -1)
+    else:
+        x = task.x[shuffle_idx]
+
+    # y = temp_get_super_y(task)
+    y = task.y
+    y = y[shuffle_idx]
+    if not task.is_discrete:
+        x = x.reshape(-1, task.x.shape[-1])
+    y = y.reshape(-1, 1)
+    w = get_weights(y, temp=temp)
+
+    # Sort y in descending order and select the top 'size' instances
+    sorted_indices = np.argsort(-y, axis=0).flatten()
+    top_indices = sorted_indices[:size]
+    x = x[top_indices]
+    y = y[top_indices]
+    w = w[top_indices]
+
+    if val_frac is None:
+        val_frac = 0
+
+    val_length = int(length * val_frac)
+    train_length = length - val_length
+
+    train_dataset = RvSDataset(
+        task,
+        x[:train_length],
+        y[:train_length],
+        # None,
+        w[:train_length],
+        device,
+        mode='train')
+    val_dataset = RvSDataset(
+        task,
+        x[train_length:],
+        y[train_length:],
+        # None,
+        w[train_length:],
+        device,
+        mode='val')
+
+    return train_dataset, val_dataset
+
+
 class RvSDataModule(pl.LightningDataModule):
 
-    def __init__(self, task, batch_size, num_workers, val_frac, device, temp):
+    def __init__(self, task, batch_size, num_workers, val_frac, device, temp, top_candidates_size=None):
         super().__init__()
 
         self.task = task
@@ -172,10 +226,15 @@ class RvSDataModule(pl.LightningDataModule):
         self.train_dataset = None
         self.val_dataset = None
         self.temp = temp
+        self.top_candidates_size = top_candidates_size
 
     def setup(self, stage=None):
-        self.train_dataset, self.val_dataset = split_dataset(
-            self.task, self.val_frac, self.device, self.temp)
+        if self.top_candidates_size is not None:
+            self.train_dataset, self.val_dataset = split_dataset_based_on_top_candidates(
+                self.task, size=self.top_candidates_size, val_frac=self.val_frac, device=self.device, temp=self.temp)
+        else:
+            self.train_dataset, self.val_dataset = split_dataset(
+                self.task, self.val_frac, self.device, self.temp)
 
     def train_dataloader(self):
         train_loader = DataLoader(self.train_dataset,
@@ -191,8 +250,8 @@ class RvSDataModule(pl.LightningDataModule):
 
 
 def log_args(
-    args: configargparse.Namespace,
-    wandb_logger: pl.loggers.wandb.WandbLogger,
+        args: configargparse.Namespace,
+        wandb_logger: pl.loggers.wandb.WandbLogger,
 ) -> None:
     """Log arguments to a file in the wandb directory."""
     wandb_logger.log_hyperparams(args)
@@ -211,12 +270,13 @@ def log_args(
         except AttributeError:
             json.dump(args, f)
 
+
 def run_training_forward(
-    taskname: str,
-    seed: int,
-    wandb_logger: pl.loggers.wandb.WandbLogger,
-    args,
-    device=None,
+        taskname: str,
+        seed: int,
+        wandb_logger: pl.loggers.wandb.WandbLogger,
+        args,
+        device=None,
 ):
     epochs = args.epochs
     max_steps = args.max_steps
@@ -255,18 +315,17 @@ def run_training_forward(
     if normalise_y:
         task.map_normalize_y()
 
-
     model = ForwardModel(taskname=taskname,
-                          task=task,
-                          learning_rate=learning_rate,
-                          hidden_size=hidden_size,
-                          vtype=vtype,
-                          beta_min=args.beta_min,
-                          beta_max=args.beta_max,
-                          simple_clip=args.simple_clip,
-                          T0=T0,
-                          debias=debias,
-                          dropout_p=dropout_p)
+                         task=task,
+                         learning_rate=learning_rate,
+                         hidden_size=hidden_size,
+                         vtype=vtype,
+                         beta_min=args.beta_min,
+                         beta_max=args.beta_max,
+                         simple_clip=args.simple_clip,
+                         T0=T0,
+                         debias=debias,
+                         dropout_p=dropout_p)
 
     monitor = "val_loss" if val_frac > 0 else "train_loss"
     checkpoint_dirpath = os.path.join(wandb_logger.experiment.dir,
@@ -315,17 +374,17 @@ def run_training_forward(
                                 device=device,
                                 batch_size=batch_size,
                                 num_workers=num_workers,
-                                temp=args.temp)
+                                temp=args.temp,
+                                top_candidates_size=args.top_candidates_size)
     trainer.fit(model, data_module)
 
 
-
 def run_training(
-    taskname: str,
-    seed: int,
-    wandb_logger: pl.loggers.wandb.WandbLogger,
-    args,
-    device=None,
+        taskname: str,
+        seed: int,
+        wandb_logger: pl.loggers.wandb.WandbLogger,
+        args,
+        device=None,
 ):
     epochs = args.epochs
     max_steps = args.max_steps
@@ -447,16 +506,16 @@ def run_training(
 
 @torch.no_grad()
 def run_evaluate(
-    taskname,
-    seed,
-    hidden_size,
-    learning_rate,
-    checkpoint_path,
-    args,
-    wandb_logger=None,
-    device=None,
-    normalise_x=False,
-    normalise_y=False,
+        taskname,
+        seed,
+        hidden_size,
+        learning_rate,
+        checkpoint_path,
+        args,
+        wandb_logger=None,
+        device=None,
+        normalise_x=False,
+        normalise_y=False,
 ):
     set_seed(seed)
     task = design_bench.make(TASKNAME2TASK[taskname])
@@ -466,7 +525,6 @@ def run_evaluate(
         task.map_normalize_x()
     if normalise_y:
         task.map_normalize_y()
-
 
     if not args.score_matching:
         model = DiffusionTest.load_from_checkpoint(
@@ -517,7 +575,7 @@ def run_evaluate(
                     t_n.fill_(ts[i + 1].item())
                 mu = sde.gen_sde.mu(t, x_t, ya, lmbd=lmbd, gamma=args.gamma)
                 sigma = sde.gen_sde.sigma(t, x_t, lmbd=lmbd)
-                x_t = x_t + delta * mu + delta**0.5 * sigma * torch.randn_like(
+                x_t = x_t + delta * mu + delta ** 0.5 * sigma * torch.randn_like(
                     x_t
                 )  # one step update of Euler Maruyama method with a step size delta
                 # Additional terms for Heun's method
@@ -529,7 +587,7 @@ def run_evaluate(
                                          gamma=args.gamma)
                     sigma2 = sde.gen_sde.sigma(t_n, x_t, lmbd=lmbd)
                     x_t = x_t + (sigma2 -
-                                 sigma) / 2 * delta**0.5 * torch.randn_like(x_t)
+                                 sigma) / 2 * delta ** 0.5 * torch.randn_like(x_t)
 
                 if keep_all_samples or i == num_steps - 1:
                     xs.append(x_t.cpu())
@@ -563,7 +621,7 @@ def run_evaluate(
                 t.fill_(ts[i].item())
                 mu = sde.gen_sde.mu(t, x_t, ya, lmbd=lmbd, gamma=args.gamma)
                 sigma = sde.gen_sde.sigma(t, x_t, lmbd=lmbd)
-                x_t = x_t + delta * mu + delta**0.5 * sigma * torch.randn_like(
+                x_t = x_t + delta * mu + delta ** 0.5 * sigma * torch.randn_like(
                     x_t
                 )  # one step update of Euler Maruyama method with a step size delta
                 if keep_all_samples or i == num_steps - 1:
@@ -607,7 +665,7 @@ def run_evaluate(
         model = ForwardModel.load_from_checkpoint(
             checkpoint_path=checkpoint_path,
             taskname=taskname,
-            task=task,)
+            task=task, )
 
         return model
 
@@ -631,7 +689,7 @@ def run_evaluate(
                           num_steps,
                           lmbd=lmbd,
                           keep_all_samples=False)  # sample
-                          # keep_all_samples=True)  # sample
+        # keep_all_samples=True)  # sample
 
         ctr = 0
         # pred_model = _get_trained_model()
@@ -883,11 +941,17 @@ if __name__ == "__main__":
         required=False,
         default=20.0,
     )
+    parser.add_argument(
+        "top_candidates_size",
+        type=int,
+        required=False,
+        default=None,
+    )
     args = parser.parse_args()
 
     wandb_project = "score-matching " if args.score_matching else "sde-flow"
 
-    args.seed = np.random.randint(2**31 - 1) if args.seed is None else args.seed
+    args.seed = np.random.randint(2 ** 31 - 1) if args.seed is None else args.seed
     set_seed(args.seed + 1)
     device = configure_gpu(args.use_gpu, args.which_gpu)
 
@@ -902,7 +966,7 @@ if __name__ == "__main__":
             save_dir=expt_save_path)
         log_args(args, wandb_logger)
         run_training(
-        # run_training_forward(
+            # run_training_forward(
             taskname=args.task,
             seed=args.seed,
             wandb_logger=wandb_logger,
