@@ -1,0 +1,2562 @@
+Editing ant
+Score matching loss
+torch.Size([60])
+GT ys: 3.566067695617676
+normalise
+Max Score:  0.7557036
+Median Score:  0.37061575
+torch.Size([60])
+GT ys: 3.505463123321533
+normalise
+Max Score:  0.7493236
+Median Score:  0.31479093
+torch.Size([60])
+GT ys: 3.654068946838379
+normalise
+Max Score:  0.76496774
+Median Score:  0.3894814
+torch.Size([60])
+GT ys: 2.9881205558776855
+normalise
+Max Score:  0.6948611
+Median Score:  0.32584822
+torch.Size([60])
+GT ys: 3.1866185665130615
+normalise
+Max Score:  0.7157577
+Median Score:  0.3682402
+torch.Size([60])
+GT ys: 3.4151883125305176
+normalise
+Max Score:  0.73982
+Median Score:  0.30840755
+torch.Size([60])
+GT ys: 3.2613096237182617
+normalise
+Max Score:  0.72362065
+Median Score:  0.311174
+torch.Size([60])
+GT ys: 3.533700704574585
+normalise
+Max Score:  0.7522962
+Median Score:  0.2902684
+torch.Size([60])
+GT ys: 3.500361919403076
+normalise
+Max Score:  0.7487865
+Median Score:  0.35525474
+torch.Size([60])
+GT ys: 3.5579745769500732
+normalise
+Max Score:  0.7548516
+Median Score:  0.27994114
+torch.Size([60])
+GT ys: 3.237092971801758
+normalise
+Max Score:  0.7210713
+Median Score:  0.31846678
+torch.Size([60])
+GT ys: 3.2922041416168213
+normalise
+Max Score:  0.72687304
+Median Score:  0.37157136
+torch.Size([60])
+GT ys: 3.341949224472046
+normalise
+Max Score:  0.73210984
+Median Score:  0.32444623
+torch.Size([60])
+GT ys: 3.7149717807769775
+normalise
+Max Score:  0.77137923
+Median Score:  0.36799142
+torch.Size([60])
+GT ys: 3.2269949913024902
+normalise
+Max Score:  0.72000825
+Median Score:  0.26764035
+torch.Size([60])
+GT ys: 2.9791369438171387
+normalise
+Max Score:  0.69391537
+Median Score:  0.32913294
+torch.Size([60])
+GT ys: 3.0077319145202637
+normalise
+Max Score:  0.6969257
+Median Score:  0.38818407
+torch.Size([60])
+GT ys: 3.54367995262146
+normalise
+Max Score:  0.75334674
+Median Score:  0.3208596
+torch.Size([60])
+GT ys: 3.3556127548217773
+normalise
+Max Score:  0.7335482
+Median Score:  0.33407578
+torch.Size([60])
+GT ys: 3.0601730346679688
+normalise
+Max Score:  0.7024463
+Median Score:  0.3230502
+torch.Size([60])
+GT ys: 3.2164080142974854
+normalise
+Max Score:  0.7188937
+Median Score:  0.30561894
+torch.Size([60])
+GT ys: 2.9074058532714844
+normalise
+Max Score:  0.686364
+Median Score:  0.3418851
+torch.Size([60])
+GT ys: 3.1089038848876953
+normalise
+Max Score:  0.70757633
+Median Score:  0.33807424
+torch.Size([60])
+GT ys: 3.587397575378418
+normalise
+Max Score:  0.75794905
+Median Score:  0.31604835
+torch.Size([60])
+GT ys: 3.001641273498535
+normalise
+Max Score:  0.6962845
+Median Score:  0.3687554
+torch.Size([60])
+GT ys: 3.5544564723968506
+normalise
+Max Score:  0.75448126
+Median Score:  0.35580257
+torch.Size([60])
+GT ys: 3.2181077003479004
+normalise
+Max Score:  0.71907264
+Median Score:  0.30649015
+torch.Size([60])
+GT ys: 2.483505964279175
+normalise
+Max Score:  0.6417386
+Median Score:  0.29112104
+torch.Size([60])
+GT ys: 2.8087093830108643
+normalise
+Max Score:  0.6759739
+Median Score:  0.32828832
+torch.Size([60])
+GT ys: 3.2236762046813965
+normalise
+Max Score:  0.7196589
+Median Score:  0.25806347
+torch.Size([60])
+GT ys: 2.9353322982788086
+normalise
+Max Score:  0.6893039
+Median Score:  0.2903752
+torch.Size([60])
+GT ys: 2.877708673477173
+normalise
+Max Score:  0.6832377
+Median Score:  0.31297976
+torch.Size([60])
+GT ys: 2.899813175201416
+normalise
+Max Score:  0.68556476
+Median Score:  0.30744192
+torch.Size([60])
+GT ys: 3.687307357788086
+normalise
+Max Score:  0.76846695
+Median Score:  0.3035202
+torch.Size([60])
+GT ys: 2.90730881690979
+normalise
+Max Score:  0.68635374
+Median Score:  0.2521409
+torch.Size([60])
+GT ys: 2.852402687072754
+normalise
+Max Score:  0.68057364
+Median Score:  0.27527234
+torch.Size([60])
+GT ys: 2.3678336143493652
+normalise
+Max Score:  0.62956136
+Median Score:  0.3450174
+torch.Size([60])
+GT ys: 3.283902645111084
+normalise
+Max Score:  0.7259991
+Median Score:  0.32875437
+torch.Size([60])
+GT ys: 3.32546329498291
+normalise
+Max Score:  0.7303744
+Median Score:  0.39792943
+torch.Size([60])
+GT ys: 3.3289248943328857
+normalise
+Max Score:  0.7307388
+Median Score:  0.32427627
+torch.Size([60])
+GT ys: 2.87188458442688
+normalise
+Max Score:  0.6826245
+Median Score:  0.35784233
+torch.Size([60])
+GT ys: 3.192897319793701
+normalise
+Max Score:  0.7164187
+Median Score:  0.3370722
+torch.Size([60])
+GT ys: 3.4543256759643555
+normalise
+Max Score:  0.7439402
+Median Score:  0.32604787
+torch.Size([60])
+GT ys: 3.2002029418945312
+normalise
+Max Score:  0.71718776
+Median Score:  0.37499064
+torch.Size([60])
+GT ys: 3.46049165725708
+normalise
+Max Score:  0.74458927
+Median Score:  0.32982895
+torch.Size([60])
+GT ys: 2.521838426589966
+normalise
+Max Score:  0.64577395
+Median Score:  0.27848437
+torch.Size([60])
+GT ys: 3.2589781284332275
+normalise
+Max Score:  0.7233752
+Median Score:  0.24776402
+torch.Size([60])
+GT ys: 3.368387222290039
+normalise
+Max Score:  0.7348931
+Median Score:  0.35572878
+torch.Size([60])
+GT ys: 2.803394317626953
+normalise
+Max Score:  0.6754143
+Median Score:  0.3599601
+torch.Size([60])
+GT ys: 3.2051401138305664
+normalise
+Max Score:  0.7177075
+Median Score:  0.29866517
+torch.Size([60])
+GT ys: 3.232323169708252
+normalise
+Max Score:  0.7205692
+Median Score:  0.32527727
+torch.Size([60])
+GT ys: 2.950146198272705
+normalise
+Max Score:  0.69086343
+Median Score:  0.3622852
+torch.Size([60])
+GT ys: 3.0259406566619873
+normalise
+Max Score:  0.6988426
+Median Score:  0.33132333
+torch.Size([60])
+GT ys: 3.0981571674346924
+normalise
+Max Score:  0.70644504
+Median Score:  0.29208228
+torch.Size([60])
+GT ys: 2.672248125076294
+normalise
+Max Score:  0.66160816
+Median Score:  0.31976333
+torch.Size([60])
+GT ys: 3.1019985675811768
+normalise
+Max Score:  0.7068494
+Median Score:  0.31677526
+torch.Size([60])
+GT ys: 3.6337523460388184
+normalise
+Max Score:  0.76282907
+Median Score:  0.3334065
+torch.Size([60])
+GT ys: 3.13209867477417
+normalise
+Max Score:  0.71001816
+Median Score:  0.31945327
+torch.Size([60])
+GT ys: 3.089177131652832
+normalise
+Max Score:  0.7054997
+Median Score:  0.2955975
+torch.Size([60])
+GT ys: 2.6315557956695557
+normalise
+Max Score:  0.6573243
+Median Score:  0.2932954
+torch.Size([60])
+GT ys: 3.042917013168335
+normalise
+Max Score:  0.7006298
+Median Score:  0.31826895
+torch.Size([60])
+GT ys: 3.396430492401123
+normalise
+Max Score:  0.7378453
+Median Score:  0.32987753
+torch.Size([60])
+GT ys: 3.0175905227661133
+normalise
+Max Score:  0.69796354
+Median Score:  0.33371893
+torch.Size([60])
+GT ys: 3.821436643600464
+normalise
+Max Score:  0.7825871
+Median Score:  0.36623806
+torch.Size([60])
+GT ys: 2.8357295989990234
+normalise
+Max Score:  0.6788184
+Median Score:  0.28437042
+torch.Size([60])
+GT ys: 2.826101064682007
+normalise
+Max Score:  0.6778047
+Median Score:  0.28304797
+torch.Size([60])
+GT ys: 3.267099380493164
+normalise
+Max Score:  0.7242302
+Median Score:  0.30430782
+torch.Size([60])
+GT ys: 3.269031524658203
+normalise
+Max Score:  0.72443354
+Median Score:  0.30189362
+torch.Size([60])
+GT ys: 3.0318145751953125
+normalise
+Max Score:  0.6994609
+Median Score:  0.29989666
+torch.Size([60])
+GT ys: 3.613259792327881
+normalise
+Max Score:  0.7606717
+Median Score:  0.39442977
+torch.Size([60])
+GT ys: 2.435877799987793
+normalise
+Max Score:  0.6367246
+Median Score:  0.34983522
+torch.Size([60])
+GT ys: 3.0154764652252197
+normalise
+Max Score:  0.697741
+Median Score:  0.35512897
+torch.Size([60])
+GT ys: 2.851027488708496
+normalise
+Max Score:  0.68042886
+Median Score:  0.37602714
+torch.Size([60])
+GT ys: 2.852806568145752
+normalise
+Max Score:  0.6806162
+Median Score:  0.2809322
+torch.Size([60])
+GT ys: 2.8986902236938477
+normalise
+Max Score:  0.6854465
+Median Score:  0.32102504
+torch.Size([60])
+GT ys: 3.32600736618042
+normalise
+Max Score:  0.7304316
+Median Score:  0.29486
+torch.Size([60])
+GT ys: 3.065809965133667
+normalise
+Max Score:  0.70303977
+Median Score:  0.32977495
+torch.Size([60])
+GT ys: 3.4551680088043213
+normalise
+Max Score:  0.7440288
+Median Score:  0.32134643
+torch.Size([60])
+GT ys: 3.9807465076446533
+normalise
+Max Score:  0.79935825
+Median Score:  0.29621476
+torch.Size([60])
+GT ys: 3.3753621578216553
+normalise
+Max Score:  0.73562735
+Median Score:  0.29622585
+torch.Size([60])
+GT ys: 2.8569748401641846
+normalise
+Max Score:  0.68105495
+Median Score:  0.34104744
+torch.Size([60])
+GT ys: 3.1340911388397217
+normalise
+Max Score:  0.7102279
+Median Score:  0.28785384
+torch.Size([60])
+GT ys: 3.7140913009643555
+normalise
+Max Score:  0.77128655
+Median Score:  0.28559685
+torch.Size([60])
+GT ys: 3.8187167644500732
+normalise
+Max Score:  0.78230083
+Median Score:  0.34253538
+torch.Size([60])
+GT ys: 3.174611806869507
+normalise
+Max Score:  0.71449375
+Median Score:  0.3164969
+torch.Size([60])
+GT ys: 2.82598614692688
+normalise
+Max Score:  0.67779267
+Median Score:  0.27469003
+torch.Size([60])
+GT ys: 3.0507359504699707
+normalise
+Max Score:  0.7014529
+Median Score:  0.30529022
+torch.Size([60])
+GT ys: 2.7736802101135254
+normalise
+Max Score:  0.6722863
+Median Score:  0.298187
+torch.Size([60])
+GT ys: 3.1829397678375244
+normalise
+Max Score:  0.7153704
+Median Score:  0.25277025
+torch.Size([60])
+GT ys: 3.350231409072876
+normalise
+Max Score:  0.7329818
+Median Score:  0.31171545
+torch.Size([60])
+GT ys: 2.730750322341919
+normalise
+Max Score:  0.66776687
+Median Score:  0.27390134
+torch.Size([60])
+GT ys: 4.232514381408691
+normalise
+Max Score:  0.8258627
+Median Score:  0.31106663
+torch.Size([60])
+GT ys: 3.022639513015747
+normalise
+Max Score:  0.69849503
+Median Score:  0.32732683
+torch.Size([60])
+GT ys: 3.051136016845703
+normalise
+Max Score:  0.701495
+Median Score:  0.36969063
+torch.Size([60])
+GT ys: 2.7312517166137695
+normalise
+Max Score:  0.6678197
+Median Score:  0.36180717
+torch.Size([60])
+GT ys: 3.5837459564208984
+normalise
+Max Score:  0.75756466
+Median Score:  0.29610094
+torch.Size([60])
+GT ys: 3.3418188095092773
+normalise
+Max Score:  0.73209614
+Median Score:  0.34127757
+torch.Size([60])
+GT ys: 3.2626261711120605
+normalise
+Max Score:  0.7237593
+Median Score:  0.3572951
+torch.Size([60])
+GT ys: 3.222672700881958
+normalise
+Max Score:  0.71955323
+Median Score:  0.33496886
+torch.Size([60])
+GT ys: 2.926316976547241
+normalise
+Max Score:  0.6883548
+Median Score:  0.27258962
+torch.Size([60])
+GT ys: 2.7434089183807373
+normalise
+Max Score:  0.6690995
+Median Score:  0.32500094
+torch.Size([60])
+GT ys: 3.2508440017700195
+normalise
+Max Score:  0.7225189
+Median Score:  0.2903632
+torch.Size([60])
+GT ys: 3.471130847930908
+normalise
+Max Score:  0.74570924
+Median Score:  0.4031747
+torch.Size([60])
+GT ys: 3.2421939373016357
+normalise
+Max Score:  0.7216083
+Median Score:  0.3413438
+torch.Size([60])
+GT ys: 3.2791194915771484
+normalise
+Max Score:  0.7254956
+Median Score:  0.2549465
+torch.Size([60])
+GT ys: 3.8009679317474365
+normalise
+Max Score:  0.78043234
+Median Score:  0.3341372
+torch.Size([60])
+GT ys: 3.5911242961883545
+normalise
+Max Score:  0.7583414
+Median Score:  0.38001883
+torch.Size([60])
+GT ys: 2.8701412677764893
+normalise
+Max Score:  0.68244106
+Median Score:  0.29344547
+torch.Size([60])
+GT ys: 4.121285915374756
+normalise
+Max Score:  0.8141533
+Median Score:  0.3416991
+torch.Size([60])
+GT ys: 2.5109028816223145
+normalise
+Max Score:  0.64462274
+Median Score:  0.26155734
+torch.Size([60])
+GT ys: 3.962796688079834
+normalise
+Max Score:  0.79746866
+Median Score:  0.3674944
+torch.Size([60])
+GT ys: 2.9359140396118164
+normalise
+Max Score:  0.68936515
+Median Score:  0.3305841
+torch.Size([60])
+GT ys: 3.671147584915161
+normalise
+Max Score:  0.7667657
+Median Score:  0.302157
+torch.Size([60])
+GT ys: 3.4626693725585938
+normalise
+Max Score:  0.7448185
+Median Score:  0.27613065
+torch.Size([60])
+GT ys: 3.296945095062256
+normalise
+Max Score:  0.72737217
+Median Score:  0.3343189
+torch.Size([60])
+GT ys: 2.5563676357269287
+normalise
+Max Score:  0.64940906
+Median Score:  0.341983
+torch.Size([60])
+GT ys: 3.4602086544036865
+normalise
+Max Score:  0.7445594
+Median Score:  0.31434774
+torch.Size([60])
+GT ys: 3.027017116546631
+normalise
+Max Score:  0.6989559
+Median Score:  0.42131004
+torch.Size([60])
+GT ys: 3.068023681640625
+normalise
+Max Score:  0.7032728
+Median Score:  0.2449191
+torch.Size([60])
+GT ys: 3.0596346855163574
+normalise
+Max Score:  0.7023897
+Median Score:  0.34136093
+torch.Size([60])
+GT ys: 3.397327423095703
+normalise
+Max Score:  0.7379398
+Median Score:  0.28436226
+torch.Size([60])
+GT ys: 3.2114651203155518
+normalise
+Max Score:  0.71837336
+Median Score:  0.2937068
+torch.Size([60])
+GT ys: 3.138345241546631
+normalise
+Max Score:  0.7106758
+Median Score:  0.33649012
+torch.Size([60])
+GT ys: 2.5995965003967285
+normalise
+Max Score:  0.6539598
+Median Score:  0.24456532
+torch.Size([60])
+GT ys: 3.2590436935424805
+normalise
+Max Score:  0.7233821
+Median Score:  0.35923836
+torch.Size([60])
+GT ys: 2.8294403553009033
+normalise
+Max Score:  0.67815626
+Median Score:  0.25588754
+torch.Size([60])
+GT ys: 2.623490571975708
+normalise
+Max Score:  0.65647525
+Median Score:  0.2643796
+torch.Size([60])
+GT ys: 3.82055926322937
+normalise
+Max Score:  0.7824948
+Median Score:  0.36452305
+torch.Size([60])
+GT ys: 3.8179991245269775
+normalise
+Max Score:  0.7822253
+Median Score:  0.34914342
+torch.Size([60])
+GT ys: 2.89328670501709
+normalise
+Max Score:  0.68487763
+Median Score:  0.2712931
+torch.Size([60])
+GT ys: 3.6872305870056152
+normalise
+Max Score:  0.7684588
+Median Score:  0.3070646
+torch.Size([60])
+GT ys: 2.7620468139648438
+normalise
+Max Score:  0.6710616
+Median Score:  0.31873214
+torch.Size([60])
+GT ys: 2.81097149848938
+normalise
+Max Score:  0.6762121
+Median Score:  0.3361136
+torch.Size([60])
+GT ys: 2.8401477336883545
+normalise
+Max Score:  0.6792835
+Median Score:  0.29675823
+torch.Size([60])
+GT ys: 3.262094497680664
+normalise
+Max Score:  0.7237033
+Median Score:  0.33431116
+torch.Size([60])
+GT ys: 2.8197214603424072
+normalise
+Max Score:  0.67713314
+Median Score:  0.33433023
+torch.Size([60])
+GT ys: 3.4510908126831055
+normalise
+Max Score:  0.74359965
+Median Score:  0.39196894
+torch.Size([60])
+GT ys: 3.2275264263153076
+normalise
+Max Score:  0.72006416
+Median Score:  0.39173478
+torch.Size([60])
+GT ys: 3.197575569152832
+normalise
+Max Score:  0.71691114
+Median Score:  0.29258984
+torch.Size([60])
+GT ys: 3.1292359828948975
+normalise
+Max Score:  0.70971686
+Median Score:  0.3287503
+torch.Size([60])
+GT ys: 3.871732711791992
+normalise
+Max Score:  0.787882
+Median Score:  0.32320935
+torch.Size([60])
+GT ys: 3.6006174087524414
+normalise
+Max Score:  0.75934076
+Median Score:  0.32907546
+torch.Size([60])
+GT ys: 3.4737069606781006
+normalise
+Max Score:  0.74598044
+Median Score:  0.36746398
+torch.Size([60])
+GT ys: 3.887073516845703
+normalise
+Max Score:  0.789497
+Median Score:  0.2978624
+torch.Size([60])
+GT ys: 2.9141926765441895
+normalise
+Max Score:  0.6870785
+Median Score:  0.27882886
+torch.Size([60])
+GT ys: 2.7264564037323
+normalise
+Max Score:  0.6673149
+Median Score:  0.34151688
+torch.Size([60])
+GT ys: 3.4359657764434814
+normalise
+Max Score:  0.7420073
+Median Score:  0.31743848
+torch.Size([60])
+GT ys: 3.33992075920105
+normalise
+Max Score:  0.73189634
+Median Score:  0.3596142
+torch.Size([60])
+GT ys: 3.1094810962677
+normalise
+Max Score:  0.7076372
+Median Score:  0.28973567
+torch.Size([60])
+GT ys: 3.628115653991699
+normalise
+Max Score:  0.76223564
+Median Score:  0.29157168
+torch.Size([60])
+GT ys: 3.53157639503479
+normalise
+Max Score:  0.7520726
+Median Score:  0.34472227
+torch.Size([60])
+GT ys: 3.362593650817871
+normalise
+Max Score:  0.7342832
+Median Score:  0.31503135
+torch.Size([60])
+GT ys: 3.010312080383301
+normalise
+Max Score:  0.6971973
+Median Score:  0.3042617
+torch.Size([60])
+GT ys: 3.238502264022827
+normalise
+Max Score:  0.72121966
+Median Score:  0.30319166
+torch.Size([60])
+GT ys: 3.2928051948547363
+normalise
+Max Score:  0.72693634
+Median Score:  0.29886398
+torch.Size([60])
+GT ys: 2.621307373046875
+normalise
+Max Score:  0.65624547
+Median Score:  0.32999992
+torch.Size([60])
+GT ys: 3.0164268016815186
+normalise
+Max Score:  0.69784105
+Median Score:  0.38209593
+torch.Size([60])
+GT ys: 3.093506336212158
+normalise
+Max Score:  0.70595545
+Median Score:  0.33559915
+torch.Size([60])
+GT ys: 3.2697396278381348
+normalise
+Max Score:  0.72450817
+Median Score:  0.37025306
+torch.Size([60])
+GT ys: 3.7748684883117676
+normalise
+Max Score:  0.7776848
+Median Score:  0.3230954
+torch.Size([60])
+GT ys: 3.4585585594177246
+normalise
+Max Score:  0.7443858
+Median Score:  0.40357178
+torch.Size([60])
+GT ys: 3.388350486755371
+normalise
+Max Score:  0.7369947
+Median Score:  0.3433501
+torch.Size([60])
+GT ys: 3.2187342643737793
+normalise
+Max Score:  0.71913856
+Median Score:  0.32608038
+torch.Size([60])
+GT ys: 2.5591797828674316
+normalise
+Max Score:  0.64970505
+Median Score:  0.33815625
+torch.Size([60])
+GT ys: 3.2735350131988525
+normalise
+Max Score:  0.72490764
+Median Score:  0.35709763
+torch.Size([60])
+GT ys: 3.0892751216888428
+normalise
+Max Score:  0.70550996
+Median Score:  0.37146315
+torch.Size([60])
+GT ys: 3.495880126953125
+normalise
+Max Score:  0.7483147
+Median Score:  0.38486043
+torch.Size([60])
+GT ys: 4.060674667358398
+normalise
+Max Score:  0.80777264
+Median Score:  0.30851626
+torch.Size([60])
+GT ys: 3.391521453857422
+normalise
+Max Score:  0.73732847
+Median Score:  0.34856343
+torch.Size([60])
+GT ys: 3.5543582439422607
+normalise
+Max Score:  0.7544709
+Median Score:  0.36984625
+torch.Size([60])
+GT ys: 3.23351788520813
+normalise
+Max Score:  0.7206949
+Median Score:  0.34373567
+torch.Size([60])
+GT ys: 2.6263365745544434
+normalise
+Max Score:  0.6567749
+Median Score:  0.36656874
+torch.Size([60])
+GT ys: 3.399433135986328
+normalise
+Max Score:  0.7381614
+Median Score:  0.3799302
+torch.Size([60])
+GT ys: 3.578301191329956
+normalise
+Max Score:  0.75699145
+Median Score:  0.31055427
+torch.Size([60])
+GT ys: 3.4454092979431152
+normalise
+Max Score:  0.74300146
+Median Score:  0.33518606
+torch.Size([60])
+GT ys: 2.6907052993774414
+normalise
+Max Score:  0.6635512
+Median Score:  0.27564913
+torch.Size([60])
+GT ys: 3.2718451023101807
+normalise
+Max Score:  0.7247298
+Median Score:  0.3278305
+torch.Size([60])
+GT ys: 2.9762325286865234
+normalise
+Max Score:  0.6936096
+Median Score:  0.34775916
+torch.Size([60])
+GT ys: 2.708930015563965
+normalise
+Max Score:  0.66546977
+Median Score:  0.32528043
+torch.Size([60])
+GT ys: 3.455796003341675
+normalise
+Max Score:  0.74409497
+Median Score:  0.3808865
+torch.Size([60])
+GT ys: 3.6897060871124268
+normalise
+Max Score:  0.7687194
+Median Score:  0.3157012
+torch.Size([60])
+GT ys: 3.1592705249786377
+normalise
+Max Score:  0.7128787
+Median Score:  0.29960924
+torch.Size([60])
+GT ys: 3.2799909114837646
+normalise
+Max Score:  0.7255873
+Median Score:  0.39318952
+torch.Size([60])
+GT ys: 3.099900484085083
+normalise
+Max Score:  0.70662856
+Median Score:  0.32976812
+torch.Size([60])
+GT ys: 2.5997812747955322
+normalise
+Max Score:  0.6539793
+Median Score:  0.25389385
+torch.Size([60])
+GT ys: 3.0719008445739746
+normalise
+Max Score:  0.70368093
+Median Score:  0.35689428
+torch.Size([60])
+GT ys: 3.358611822128296
+normalise
+Max Score:  0.733864
+Median Score:  0.33611196
+torch.Size([60])
+GT ys: 2.852781057357788
+normalise
+Max Score:  0.68061346
+Median Score:  0.2988012
+torch.Size([60])
+GT ys: 3.08388090133667
+normalise
+Max Score:  0.70494217
+Median Score:  0.3414211
+torch.Size([60])
+GT ys: 3.1254971027374268
+normalise
+Max Score:  0.70932317
+Median Score:  0.30531362
+torch.Size([60])
+GT ys: 3.7594587802886963
+normalise
+Max Score:  0.77606255
+Median Score:  0.359777
+torch.Size([60])
+GT ys: 3.4655096530914307
+normalise
+Max Score:  0.7451175
+Median Score:  0.364366
+torch.Size([60])
+GT ys: 3.1354174613952637
+normalise
+Max Score:  0.71036756
+Median Score:  0.34396398
+torch.Size([60])
+GT ys: 3.2547414302825928
+normalise
+Max Score:  0.7229292
+Median Score:  0.34169048
+torch.Size([60])
+GT ys: 2.911362648010254
+normalise
+Max Score:  0.6867805
+Median Score:  0.30255672
+torch.Size([60])
+GT ys: 3.384239673614502
+normalise
+Max Score:  0.73656195
+Median Score:  0.37114403
+torch.Size([60])
+GT ys: 3.146738052368164
+normalise
+Max Score:  0.71155936
+Median Score:  0.30427304
+torch.Size([60])
+GT ys: 3.3005130290985107
+normalise
+Max Score:  0.7277477
+Median Score:  0.28176084
+torch.Size([60])
+GT ys: 3.7604334354400635
+normalise
+Max Score:  0.7761651
+Median Score:  0.35452014
+torch.Size([60])
+GT ys: 3.821099042892456
+normalise
+Max Score:  0.78255165
+Median Score:  0.31264088
+torch.Size([60])
+GT ys: 3.362436056137085
+normalise
+Max Score:  0.7342666
+Median Score:  0.27787447
+torch.Size([60])
+GT ys: 3.485363721847534
+normalise
+Max Score:  0.7472076
+Median Score:  0.34100908
+torch.Size([60])
+GT ys: 3.6118555068969727
+normalise
+Max Score:  0.76052386
+Median Score:  0.359326
+torch.Size([60])
+GT ys: 2.8848252296447754
+normalise
+Max Score:  0.68398684
+Median Score:  0.33752203
+torch.Size([60])
+GT ys: 3.567641258239746
+normalise
+Max Score:  0.75586927
+Median Score:  0.38085428
+torch.Size([60])
+GT ys: 2.9551217555999756
+normalise
+Max Score:  0.69138724
+Median Score:  0.3212259
+torch.Size([60])
+GT ys: 3.137521982192993
+normalise
+Max Score:  0.7105891
+Median Score:  0.26980922
+torch.Size([60])
+GT ys: 2.9277796745300293
+normalise
+Max Score:  0.68850887
+Median Score:  0.33430243
+torch.Size([60])
+GT ys: 3.8956892490386963
+normalise
+Max Score:  0.79040396
+Median Score:  0.31210023
+torch.Size([60])
+GT ys: 3.0328357219696045
+normalise
+Max Score:  0.69956845
+Median Score:  0.32284656
+torch.Size([60])
+GT ys: 3.1557528972625732
+normalise
+Max Score:  0.7125084
+Median Score:  0.26855555
+torch.Size([60])
+GT ys: 3.220848560333252
+normalise
+Max Score:  0.7193612
+Median Score:  0.291478
+torch.Size([60])
+GT ys: 3.1386749744415283
+normalise
+Max Score:  0.71071047
+Median Score:  0.28253204
+torch.Size([60])
+GT ys: 2.6367225646972656
+normalise
+Max Score:  0.65786827
+Median Score:  0.3074177
+torch.Size([60])
+GT ys: 3.2271006107330322
+normalise
+Max Score:  0.7200194
+Median Score:  0.2613994
+torch.Size([60])
+GT ys: 3.150364875793457
+normalise
+Max Score:  0.7119411
+Median Score:  0.3761534
+torch.Size([60])
+GT ys: 3.2595088481903076
+normalise
+Max Score:  0.7234311
+Median Score:  0.35061467
+torch.Size([60])
+GT ys: 3.6928653717041016
+normalise
+Max Score:  0.769052
+Median Score:  0.32090357
+torch.Size([60])
+GT ys: 3.1394426822662354
+normalise
+Max Score:  0.7107913
+Median Score:  0.39074436
+torch.Size([60])
+GT ys: 2.945016622543335
+normalise
+Max Score:  0.6903234
+Median Score:  0.339176
+torch.Size([60])
+GT ys: 3.7328732013702393
+normalise
+Max Score:  0.7732638
+Median Score:  0.38557908
+torch.Size([60])
+GT ys: 3.108661413192749
+normalise
+Max Score:  0.7075509
+Median Score:  0.30217704
+torch.Size([60])
+GT ys: 2.3726861476898193
+normalise
+Max Score:  0.6300722
+Median Score:  0.31479928
+torch.Size([60])
+GT ys: 2.712249279022217
+normalise
+Max Score:  0.66581917
+Median Score:  0.3401594
+torch.Size([60])
+GT ys: 3.346686601638794
+normalise
+Max Score:  0.73260856
+Median Score:  0.30477896
+torch.Size([60])
+GT ys: 3.233823299407959
+normalise
+Max Score:  0.7207271
+Median Score:  0.24831723
+torch.Size([60])
+GT ys: 3.1342453956604004
+normalise
+Max Score:  0.7102441
+Median Score:  0.3438906
+torch.Size([60])
+GT ys: 2.804922103881836
+normalise
+Max Score:  0.6755752
+Median Score:  0.292889
+torch.Size([60])
+GT ys: 3.1250979900360107
+normalise
+Max Score:  0.7092812
+Median Score:  0.35905826
+torch.Size([60])
+GT ys: 2.8169023990631104
+normalise
+Max Score:  0.67683643
+Median Score:  0.2720144
+torch.Size([60])
+GT ys: 3.176722288131714
+normalise
+Max Score:  0.71471584
+Median Score:  0.28424472
+torch.Size([60])
+GT ys: 3.8250787258148193
+normalise
+Max Score:  0.7829706
+Median Score:  0.36600453
+torch.Size([60])
+GT ys: 3.3751914501190186
+normalise
+Max Score:  0.7356094
+Median Score:  0.3115596
+torch.Size([60])
+GT ys: 2.8730690479278564
+normalise
+Max Score:  0.6827493
+Median Score:  0.3506266
+torch.Size([60])
+GT ys: 3.134357213973999
+normalise
+Max Score:  0.7102559
+Median Score:  0.3319267
+torch.Size([60])
+GT ys: 2.912102460861206
+normalise
+Max Score:  0.6868585
+Median Score:  0.3549531
+torch.Size([60])
+GT ys: 3.1186814308166504
+normalise
+Max Score:  0.70860577
+Median Score:  0.3231798
+torch.Size([60])
+GT ys: 2.8866055011749268
+normalise
+Max Score:  0.6841743
+Median Score:  0.26497993
+torch.Size([60])
+GT ys: 3.506824254989624
+normalise
+Max Score:  0.7494669
+Median Score:  0.32326412
+torch.Size([60])
+GT ys: 2.7648468017578125
+normalise
+Max Score:  0.6713563
+Median Score:  0.30592096
+torch.Size([60])
+GT ys: 3.2134459018707275
+normalise
+Max Score:  0.7185819
+Median Score:  0.38020223
+torch.Size([60])
+GT ys: 3.040083646774292
+normalise
+Max Score:  0.70033145
+Median Score:  0.35142583
+torch.Size([60])
+GT ys: 3.0325052738189697
+normalise
+Max Score:  0.69953364
+Median Score:  0.32747862
+torch.Size([60])
+GT ys: 2.8264427185058594
+normalise
+Max Score:  0.6778407
+Median Score:  0.29136977
+torch.Size([60])
+GT ys: 3.6366755962371826
+normalise
+Max Score:  0.76313674
+Median Score:  0.33782834
+torch.Size([60])
+GT ys: 3.2816195487976074
+normalise
+Max Score:  0.7257588
+Median Score:  0.3344528
+torch.Size([60])
+GT ys: 3.2416694164276123
+normalise
+Max Score:  0.7215531
+Median Score:  0.27573833
+torch.Size([60])
+GT ys: 3.1645023822784424
+normalise
+Max Score:  0.71342945
+Median Score:  0.24417035
+torch.Size([60])
+GT ys: 2.8549609184265137
+normalise
+Max Score:  0.68084294
+Median Score:  0.38090357
+torch.Size([60])
+GT ys: 3.2353451251983643
+normalise
+Max Score:  0.7208873
+Median Score:  0.389604
+torch.Size([60])
+GT ys: 2.743454694747925
+normalise
+Max Score:  0.6691043
+Median Score:  0.3625694
+torch.Size([60])
+GT ys: 3.8321099281311035
+normalise
+Max Score:  0.7837108
+Median Score:  0.295502
+torch.Size([60])
+GT ys: 3.5762736797332764
+normalise
+Max Score:  0.756778
+Median Score:  0.36491755
+torch.Size([60])
+GT ys: 3.3263797760009766
+normalise
+Max Score:  0.73047084
+Median Score:  0.27194166
+torch.Size([60])
+GT ys: 3.2765727043151855
+normalise
+Max Score:  0.7252275
+Median Score:  0.32254806
+torch.Size([60])
+GT ys: 3.93782901763916
+normalise
+Max Score:  0.7948402
+Median Score:  0.3990454
+torch.Size([60])
+GT ys: 3.3451414108276367
+normalise
+Max Score:  0.7324459
+Median Score:  0.306055
+torch.Size([60])
+GT ys: 3.709247350692749
+normalise
+Max Score:  0.7707766
+Median Score:  0.35768658
+torch.Size([60])
+GT ys: 3.183911085128784
+normalise
+Max Score:  0.71547264
+Median Score:  0.36171147
+torch.Size([60])
+GT ys: 3.5506255626678467
+normalise
+Max Score:  0.754078
+Median Score:  0.35455304
+torch.Size([60])
+GT ys: 3.2701401710510254
+normalise
+Max Score:  0.7245503
+Median Score:  0.3259672
+torch.Size([60])
+GT ys: 3.103553295135498
+normalise
+Max Score:  0.70701313
+Median Score:  0.3334829
+torch.Size([60])
+GT ys: 3.0669310092926025
+normalise
+Max Score:  0.7031577
+Median Score:  0.31307745
+torch.Size([60])
+GT ys: 2.6611554622650146
+normalise
+Max Score:  0.6604403
+Median Score:  0.31964597
+torch.Size([60])
+GT ys: 3.417506217956543
+normalise
+Max Score:  0.74006397
+Median Score:  0.38846558
+torch.Size([60])
+GT ys: 3.333655595779419
+normalise
+Max Score:  0.73123676
+Median Score:  0.298296
+torch.Size([60])
+GT ys: 4.205545902252197
+normalise
+Max Score:  0.8230237
+Median Score:  0.33931231
+torch.Size([60])
+GT ys: 3.2983760833740234
+normalise
+Max Score:  0.7275228
+Median Score:  0.30327561
+torch.Size([60])
+GT ys: 2.989152431488037
+normalise
+Max Score:  0.6949698
+Median Score:  0.3035182
+torch.Size([60])
+GT ys: 3.1373202800750732
+normalise
+Max Score:  0.7105679
+Median Score:  0.36175746
+torch.Size([60])
+GT ys: 3.2125465869903564
+normalise
+Max Score:  0.7184872
+Median Score:  0.3853307
+torch.Size([60])
+GT ys: 3.8218047618865967
+normalise
+Max Score:  0.7826259
+Median Score:  0.32868776
+torch.Size([60])
+GT ys: 2.7846572399139404
+normalise
+Max Score:  0.6734418
+Median Score:  0.26960424
+torch.Size([60])
+GT ys: 3.407733201980591
+normalise
+Max Score:  0.73903525
+Median Score:  0.32568282
+torch.Size([60])
+GT ys: 2.8757901191711426
+normalise
+Max Score:  0.68303573
+Median Score:  0.2993959
+torch.Size([60])
+GT ys: 3.522317886352539
+normalise
+Max Score:  0.7510979
+Median Score:  0.34844813
+torch.Size([60])
+GT ys: 3.383293628692627
+normalise
+Max Score:  0.73646235
+Median Score:  0.30844885
+torch.Size([60])
+GT ys: 3.099318742752075
+normalise
+Max Score:  0.70656735
+Median Score:  0.35984525
+torch.Size([60])
+GT ys: 3.163072347640991
+normalise
+Max Score:  0.7132789
+Median Score:  0.27782026
+torch.Size([60])
+GT ys: 2.783385753631592
+normalise
+Max Score:  0.67330796
+Median Score:  0.34884217
+torch.Size([60])
+GT ys: 2.9495372772216797
+normalise
+Max Score:  0.69079936
+Median Score:  0.24373737
+torch.Size([60])
+GT ys: 3.135993242263794
+normalise
+Max Score:  0.7104282
+Median Score:  0.2410924
+torch.Size([60])
+GT ys: 2.871030569076538
+normalise
+Max Score:  0.68253464
+Median Score:  0.27884635
+torch.Size([60])
+GT ys: 3.6182408332824707
+normalise
+Max Score:  0.761196
+Median Score:  0.3676062
+torch.Size([60])
+GT ys: 3.323726177215576
+normalise
+Max Score:  0.73019147
+Median Score:  0.36803186
+torch.Size([60])
+GT ys: 3.1733758449554443
+normalise
+Max Score:  0.7143636
+Median Score:  0.25747502
+torch.Size([60])
+GT ys: 3.5542211532592773
+normalise
+Max Score:  0.75445646
+Median Score:  0.33436325
+torch.Size([60])
+GT ys: 3.5370419025421143
+normalise
+Max Score:  0.752648
+Median Score:  0.378308
+torch.Size([60])
+GT ys: 3.2423806190490723
+normalise
+Max Score:  0.72162795
+Median Score:  0.26300657
+torch.Size([60])
+GT ys: 3.0460269451141357
+normalise
+Max Score:  0.7009571
+Median Score:  0.3440448
+torch.Size([60])
+GT ys: 3.1789710521698
+normalise
+Max Score:  0.7149526
+Median Score:  0.29098272
+torch.Size([60])
+GT ys: 3.0542235374450684
+normalise
+Max Score:  0.70182
+Median Score:  0.3097018
+torch.Size([60])
+GT ys: 2.8544869422912598
+normalise
+Max Score:  0.6807931
+Median Score:  0.33835545
+torch.Size([60])
+GT ys: 3.3910982608795166
+normalise
+Max Score:  0.73728395
+Median Score:  0.32586393
+torch.Size([60])
+GT ys: 3.0747830867767334
+normalise
+Max Score:  0.7039844
+Median Score:  0.33266973
+torch.Size([60])
+GT ys: 2.88718843460083
+normalise
+Max Score:  0.68423563
+Median Score:  0.28959274
+torch.Size([60])
+GT ys: 3.3408310413360596
+normalise
+Max Score:  0.7319922
+Median Score:  0.38957793
+torch.Size([60])
+GT ys: 3.5021328926086426
+normalise
+Max Score:  0.74897295
+Median Score:  0.26786643
+torch.Size([60])
+GT ys: 2.924018144607544
+normalise
+Max Score:  0.68811285
+Median Score:  0.2957386
+torch.Size([60])
+GT ys: 2.9025638103485107
+normalise
+Max Score:  0.6858543
+Median Score:  0.3030377
+torch.Size([60])
+GT ys: 3.7380189895629883
+normalise
+Max Score:  0.7738055
+Median Score:  0.33694363
+torch.Size([60])
+GT ys: 3.2626700401306152
+normalise
+Max Score:  0.7237639
+Median Score:  0.29997995
+torch.Size([60])
+GT ys: 3.803837299346924
+normalise
+Max Score:  0.7807344
+Median Score:  0.28720394
+torch.Size([60])
+GT ys: 3.3775782585144043
+normalise
+Max Score:  0.7358607
+Median Score:  0.32691252
+torch.Size([60])
+GT ys: 3.320770740509033
+normalise
+Max Score:  0.72988033
+Median Score:  0.33191645
+torch.Size([60])
+GT ys: 3.4433810710906982
+normalise
+Max Score:  0.742788
+Median Score:  0.3596733
+torch.Size([60])
+GT ys: 2.841111183166504
+normalise
+Max Score:  0.6793849
+Median Score:  0.3649933
+torch.Size([60])
+GT ys: 3.1547391414642334
+normalise
+Max Score:  0.7124016
+Median Score:  0.32647136
+torch.Size([60])
+GT ys: 3.540771245956421
+normalise
+Max Score:  0.75304055
+Median Score:  0.32763913
+torch.Size([60])
+GT ys: 2.8241536617279053
+normalise
+Max Score:  0.6775997
+Median Score:  0.31482053
+torch.Size([60])
+GT ys: 2.7328548431396484
+normalise
+Max Score:  0.6679885
+Median Score:  0.28445372
+torch.Size([60])
+GT ys: 3.3702003955841064
+normalise
+Max Score:  0.73508394
+Median Score:  0.2762519
+torch.Size([60])
+GT ys: 2.975888729095459
+normalise
+Max Score:  0.6935735
+Median Score:  0.30332655
+torch.Size([60])
+GT ys: 3.7034075260162354
+normalise
+Max Score:  0.7701618
+Median Score:  0.30656034
+torch.Size([60])
+GT ys: 3.6887409687042236
+normalise
+Max Score:  0.7686178
+Median Score:  0.29618883
+torch.Size([60])
+GT ys: 3.155383825302124
+normalise
+Max Score:  0.7124695
+Median Score:  0.29957113
+torch.Size([60])
+GT ys: 3.3892593383789062
+normalise
+Max Score:  0.7370904
+Median Score:  0.31305796
+torch.Size([60])
+GT ys: 3.2958600521087646
+normalise
+Max Score:  0.72725785
+Median Score:  0.3419405
+torch.Size([60])
+GT ys: 4.050722599029541
+normalise
+Max Score:  0.80672485
+Median Score:  0.30288127
+torch.Size([60])
+GT ys: 3.5341482162475586
+normalise
+Max Score:  0.7523433
+Median Score:  0.3011382
+torch.Size([60])
+GT ys: 3.70847749710083
+normalise
+Max Score:  0.7706956
+Median Score:  0.33080316
+torch.Size([60])
+GT ys: 2.9295690059661865
+normalise
+Max Score:  0.6886972
+Median Score:  0.31642503
+torch.Size([60])
+GT ys: 3.2018544673919678
+normalise
+Max Score:  0.7173616
+Median Score:  0.30372855
+torch.Size([60])
+GT ys: 2.9251022338867188
+normalise
+Max Score:  0.68822694
+Median Score:  0.30721453
+torch.Size([60])
+GT ys: 3.350475549697876
+normalise
+Max Score:  0.73300743
+Median Score:  0.29819408
+torch.Size([60])
+GT ys: 3.382377862930298
+normalise
+Max Score:  0.7363659
+Median Score:  0.27822313
+torch.Size([60])
+GT ys: 3.000159740447998
+normalise
+Max Score:  0.69612855
+Median Score:  0.24726295
+torch.Size([60])
+GT ys: 3.455289602279663
+normalise
+Max Score:  0.7440416
+Median Score:  0.37807792
+torch.Size([60])
+GT ys: 2.9111902713775635
+normalise
+Max Score:  0.6867624
+Median Score:  0.28650266
+torch.Size([60])
+GT ys: 3.4354424476623535
+normalise
+Max Score:  0.74195224
+Median Score:  0.39617056
+torch.Size([60])
+GT ys: 2.455233335494995
+normalise
+Max Score:  0.63876224
+Median Score:  0.29138634
+torch.Size([60])
+GT ys: 3.3719751834869385
+normalise
+Max Score:  0.73527086
+Median Score:  0.3023422
+torch.Size([60])
+GT ys: 3.2843246459960938
+normalise
+Max Score:  0.7260435
+Median Score:  0.31866
+torch.Size([60])
+GT ys: 2.9795024394989014
+normalise
+Max Score:  0.6939539
+Median Score:  0.26944748
+torch.Size([60])
+GT ys: 2.9109177589416504
+normalise
+Max Score:  0.6867337
+Median Score:  0.31347114
+torch.Size([60])
+GT ys: 3.5359041690826416
+normalise
+Max Score:  0.7525282
+Median Score:  0.36874261
+torch.Size([60])
+GT ys: 3.848500967025757
+normalise
+Max Score:  0.78543633
+Median Score:  0.366014
+torch.Size([60])
+GT ys: 2.914268970489502
+normalise
+Max Score:  0.6870865
+Median Score:  0.33411983
+torch.Size([60])
+GT ys: 2.99116587638855
+normalise
+Max Score:  0.6951817
+Median Score:  0.32488638
+torch.Size([60])
+GT ys: 3.1203277111053467
+normalise
+Max Score:  0.70877904
+Median Score:  0.35709485
+torch.Size([60])
+GT ys: 2.694049119949341
+normalise
+Max Score:  0.66390324
+Median Score:  0.26537526
+torch.Size([60])
+GT ys: 3.6412947177886963
+normalise
+Max Score:  0.763623
+Median Score:  0.32810426
+torch.Size([60])
+GT ys: 3.622408390045166
+normalise
+Max Score:  0.76163477
+Median Score:  0.37855342
+torch.Size([60])
+GT ys: 2.9449472427368164
+normalise
+Max Score:  0.69031614
+Median Score:  0.3439101
+torch.Size([60])
+GT ys: 3.3149499893188477
+normalise
+Max Score:  0.72926754
+Median Score:  0.3123067
+torch.Size([60])
+GT ys: 3.6692147254943848
+normalise
+Max Score:  0.7665622
+Median Score:  0.32927027
+torch.Size([60])
+GT ys: 2.746096134185791
+normalise
+Max Score:  0.6693824
+Median Score:  0.35023823
+torch.Size([60])
+GT ys: 3.1358628273010254
+normalise
+Max Score:  0.7104144
+Median Score:  0.33410493
+torch.Size([60])
+GT ys: 3.9180309772491455
+normalise
+Max Score:  0.79275596
+Median Score:  0.3234209
+torch.Size([60])
+GT ys: 2.9458138942718506
+normalise
+Max Score:  0.69040734
+Median Score:  0.28924075
+torch.Size([60])
+GT ys: 3.1625990867614746
+normalise
+Max Score:  0.7132291
+Median Score:  0.3350636
+torch.Size([60])
+GT ys: 3.450162649154663
+normalise
+Max Score:  0.7435019
+Median Score:  0.37934333
+torch.Size([60])
+GT ys: 2.5255508422851562
+normalise
+Max Score:  0.64616483
+Median Score:  0.29108158
+torch.Size([60])
+GT ys: 3.0271871089935303
+normalise
+Max Score:  0.6989738
+Median Score:  0.33522022
+torch.Size([60])
+GT ys: 2.7159364223480225
+normalise
+Max Score:  0.6662074
+Median Score:  0.32330045
+torch.Size([60])
+GT ys: 3.5750179290771484
+normalise
+Max Score:  0.75664586
+Median Score:  0.3280289
+torch.Size([60])
+GT ys: 3.3323497772216797
+normalise
+Max Score:  0.7310993
+Median Score:  0.23937221
+torch.Size([60])
+GT ys: 3.5590779781341553
+normalise
+Max Score:  0.75496775
+Median Score:  0.30398947
+torch.Size([60])
+GT ys: 3.292609453201294
+normalise
+Max Score:  0.7269157
+Median Score:  0.3120273
+torch.Size([60])
+GT ys: 3.571024179458618
+normalise
+Max Score:  0.75622535
+Median Score:  0.28744054
+torch.Size([60])
+GT ys: 3.655881881713867
+normalise
+Max Score:  0.76515865
+Median Score:  0.39012215
+torch.Size([60])
+GT ys: 3.5503854751586914
+normalise
+Max Score:  0.75405264
+Median Score:  0.3140452
+torch.Size([60])
+GT ys: 3.3592050075531006
+normalise
+Max Score:  0.7339265
+Median Score:  0.29015708
+torch.Size([60])
+GT ys: 3.288712978363037
+normalise
+Max Score:  0.7265055
+Median Score:  0.3292197
+torch.Size([60])
+GT ys: 3.1149628162384033
+normalise
+Max Score:  0.7082142
+Median Score:  0.30461788
+torch.Size([60])
+GT ys: 2.9717049598693848
+normalise
+Max Score:  0.693133
+Median Score:  0.3269293
+torch.Size([60])
+GT ys: 2.9148945808410645
+normalise
+Max Score:  0.6871524
+Median Score:  0.36719555
+torch.Size([60])
+GT ys: 3.6764779090881348
+normalise
+Max Score:  0.76732683
+Median Score:  0.3396014
+torch.Size([60])
+GT ys: 3.2200241088867188
+normalise
+Max Score:  0.7192744
+Median Score:  0.33380482
+torch.Size([60])
+GT ys: 2.5037758350372314
+normalise
+Max Score:  0.64387244
+Median Score:  0.32616532
+torch.Size([60])
+GT ys: 3.4407477378845215
+normalise
+Max Score:  0.7425108
+Median Score:  0.34285975
+torch.Size([60])
+GT ys: 3.2216427326202393
+normalise
+Max Score:  0.71944475
+Median Score:  0.2999549
+torch.Size([60])
+GT ys: 3.2004828453063965
+normalise
+Max Score:  0.7172172
+Median Score:  0.35070777
+torch.Size([60])
+GT ys: 3.1789608001708984
+normalise
+Max Score:  0.7149515
+Median Score:  0.32640013
+torch.Size([60])
+GT ys: 3.392350912094116
+normalise
+Max Score:  0.7374158
+Median Score:  0.28002298
+torch.Size([60])
+GT ys: 2.894432544708252
+normalise
+Max Score:  0.6849983
+Median Score:  0.28152826
+torch.Size([60])
+GT ys: 2.985642910003662
+normalise
+Max Score:  0.6946003
+Median Score:  0.29893202
+torch.Size([60])
+GT ys: 3.094653606414795
+normalise
+Max Score:  0.70607626
+Median Score:  0.3355746
+torch.Size([60])
+GT ys: 2.630277395248413
+normalise
+Max Score:  0.6571898
+Median Score:  0.34241423
+torch.Size([60])
+GT ys: 3.2655599117279053
+normalise
+Max Score:  0.72406816
+Median Score:  0.29687443
+torch.Size([60])
+GT ys: 2.283844470977783
+normalise
+Max Score:  0.6207195
+Median Score:  0.312768
+torch.Size([60])
+GT ys: 3.5685269832611084
+normalise
+Max Score:  0.7559625
+Median Score:  0.35880643
+torch.Size([60])
+GT ys: 2.728487253189087
+normalise
+Max Score:  0.6675286
+Median Score:  0.31775504
+torch.Size([60])
+GT ys: 2.0993998050689697
+normalise
+Max Score:  0.6013024
+Median Score:  0.24385348
+torch.Size([60])
+GT ys: 2.676692247390747
+normalise
+Max Score:  0.662076
+Median Score:  0.24322344
+torch.Size([60])
+GT ys: 3.82938551902771
+normalise
+Max Score:  0.783424
+Median Score:  0.32930773
+torch.Size([60])
+GT ys: 3.3030753135681152
+normalise
+Max Score:  0.7280175
+Median Score:  0.3475125
+torch.Size([60])
+GT ys: 3.0529165267944336
+normalise
+Max Score:  0.7016824
+Median Score:  0.31297383
+torch.Size([60])
+GT ys: 3.748162031173706
+normalise
+Max Score:  0.7748733
+Median Score:  0.3862322
+torch.Size([60])
+GT ys: 3.794956922531128
+normalise
+Max Score:  0.7797995
+Median Score:  0.34024307
+torch.Size([60])
+GT ys: 2.964536666870117
+normalise
+Max Score:  0.69237834
+Median Score:  0.24848543
+torch.Size([60])
+GT ys: 3.0453336238861084
+normalise
+Max Score:  0.7008841
+Median Score:  0.326661
+torch.Size([60])
+GT ys: 3.56451678276062
+normalise
+Max Score:  0.7555403
+Median Score:  0.3041291
+torch.Size([60])
+GT ys: 3.1295502185821533
+normalise
+Max Score:  0.70974994
+Median Score:  0.38061348
+torch.Size([60])
+GT ys: 3.5554068088531494
+normalise
+Max Score:  0.75458133
+Median Score:  0.30623987
+torch.Size([60])
+GT ys: 3.826746940612793
+normalise
+Max Score:  0.7831462
+Median Score:  0.28889441
+torch.Size([60])
+GT ys: 3.4133758544921875
+normalise
+Max Score:  0.73962927
+Median Score:  0.32155347
+torch.Size([60])
+GT ys: 3.097151756286621
+normalise
+Max Score:  0.70633924
+Median Score:  0.31446284
+torch.Size([60])
+GT ys: 3.69053053855896
+normalise
+Max Score:  0.7688062
+Median Score:  0.36778033
+torch.Size([60])
+GT ys: 2.4989969730377197
+normalise
+Max Score:  0.6433694
+Median Score:  0.3429285
+torch.Size([60])
+GT ys: 3.420633554458618
+normalise
+Max Score:  0.7403933
+Median Score:  0.32596985
+torch.Size([60])
+GT ys: 3.160630941390991
+normalise
+Max Score:  0.7130219
+Median Score:  0.28662917
+torch.Size([60])
+GT ys: 3.553729772567749
+normalise
+Max Score:  0.7544047
+Median Score:  0.33757505
+torch.Size([60])
+GT ys: 3.395479202270508
+normalise
+Max Score:  0.7377451
+Median Score:  0.36160466
+torch.Size([60])
+GT ys: 3.0933146476745605
+normalise
+Max Score:  0.7059353
+Median Score:  0.33554742
+torch.Size([60])
+GT ys: 3.601581573486328
+normalise
+Max Score:  0.7594423
+Median Score:  0.33591038
+torch.Size([60])
+GT ys: 2.901932716369629
+normalise
+Max Score:  0.68578786
+Median Score:  0.31120852
+torch.Size([60])
+GT ys: 3.435088872909546
+normalise
+Max Score:  0.741915
+Median Score:  0.32206625
+torch.Size([60])
+GT ys: 2.9180307388305664
+normalise
+Max Score:  0.68748254
+Median Score:  0.27637902
+torch.Size([60])
+GT ys: 2.762990951538086
+normalise
+Max Score:  0.67116094
+Median Score:  0.33550045
+torch.Size([60])
+GT ys: 3.2144525051116943
+normalise
+Max Score:  0.71868783
+Median Score:  0.3120601
+torch.Size([60])
+GT ys: 2.5537712574005127
+normalise
+Max Score:  0.6491357
+Median Score:  0.29801363
+torch.Size([60])
+GT ys: 3.4936418533325195
+normalise
+Max Score:  0.74807906
+Median Score:  0.28292868
+torch.Size([60])
+GT ys: 2.9463837146759033
+normalise
+Max Score:  0.6904673
+Median Score:  0.25395492
+torch.Size([60])
+GT ys: 2.8151230812072754
+normalise
+Max Score:  0.67664903
+Median Score:  0.254041
+torch.Size([60])
+GT ys: 3.4290356636047363
+normalise
+Max Score:  0.74127775
+Median Score:  0.29925826
+torch.Size([60])
+GT ys: 3.1302459239959717
+normalise
+Max Score:  0.70982313
+Median Score:  0.29814535
+torch.Size([60])
+GT ys: 3.0888028144836426
+normalise
+Max Score:  0.70546025
+Median Score:  0.42513552
+torch.Size([60])
+GT ys: 3.127930164337158
+normalise
+Max Score:  0.70957935
+Median Score:  0.33197182
+torch.Size([60])
+GT ys: 3.4566538333892822
+normalise
+Max Score:  0.7441852
+Median Score:  0.31549528
+torch.Size([60])
+GT ys: 3.67783784866333
+normalise
+Max Score:  0.76747
+Median Score:  0.3394255
+torch.Size([60])
+GT ys: 2.637631893157959
+normalise
+Max Score:  0.65796393
+Median Score:  0.33806276
+torch.Size([60])
+GT ys: 2.6420178413391113
+normalise
+Max Score:  0.6584257
+Median Score:  0.31974828
+torch.Size([60])
+GT ys: 3.4210078716278076
+normalise
+Max Score:  0.7404326
+Median Score:  0.36729205
+torch.Size([60])
+GT ys: 3.338202953338623
+normalise
+Max Score:  0.73171544
+Median Score:  0.34556997
+torch.Size([60])
+GT ys: 3.676605701446533
+normalise
+Max Score:  0.76734036
+Median Score:  0.33206728
+torch.Size([60])
+GT ys: 3.241603136062622
+normalise
+Max Score:  0.7215461
+Median Score:  0.3137563
+torch.Size([60])
+GT ys: 3.511061191558838
+normalise
+Max Score:  0.74991286
+Median Score:  0.32168794
+torch.Size([60])
+GT ys: 3.43821120262146
+normalise
+Max Score:  0.7422437
+Median Score:  0.38282248
+torch.Size([60])
+GT ys: 2.927748680114746
+normalise
+Max Score:  0.6885056
+Median Score:  0.33454722
+torch.Size([60])
+GT ys: 3.6662638187408447
+normalise
+Max Score:  0.7662516
+Median Score:  0.38708717
+torch.Size([60])
+GT ys: 3.1833720207214355
+normalise
+Max Score:  0.71541595
+Median Score:  0.29653707
+torch.Size([60])
+GT ys: 3.7935049533843994
+normalise
+Max Score:  0.7796467
+Median Score:  0.2365992
+torch.Size([60])
+GT ys: 3.2012245655059814
+normalise
+Max Score:  0.7172953
+Median Score:  0.3365
+torch.Size([60])
+GT ys: 2.3013110160827637
+normalise
+Max Score:  0.6225583
+Median Score:  0.29012603
+torch.Size([60])
+GT ys: 2.8762049674987793
+normalise
+Max Score:  0.68307936
+Median Score:  0.28060293
+torch.Size([60])
+GT ys: 3.1668717861175537
+normalise
+Max Score:  0.71367884
+Median Score:  0.37582752
+torch.Size([60])
+GT ys: 3.6200473308563232
+normalise
+Max Score:  0.7613862
+Median Score:  0.33283892
+torch.Size([60])
+GT ys: 3.768404245376587
+normalise
+Max Score:  0.7770043
+Median Score:  0.352933
+torch.Size([60])
+GT ys: 3.7367143630981445
+normalise
+Max Score:  0.7736682
+Median Score:  0.34277436
+torch.Size([60])
+GT ys: 3.152529716491699
+normalise
+Max Score:  0.712169
+Median Score:  0.2675238
+torch.Size([60])
+GT ys: 3.564188003540039
+normalise
+Max Score:  0.75550574
+Median Score:  0.38603473
+torch.Size([60])
+GT ys: 2.941789150238037
+normalise
+Max Score:  0.68998367
+Median Score:  0.29847473
+torch.Size([60])
+GT ys: 2.8987228870391846
+normalise
+Max Score:  0.6854499
+Median Score:  0.31385267
+torch.Size([60])
+GT ys: 3.6363766193389893
+normalise
+Max Score:  0.7631053
+Median Score:  0.28560784
+torch.Size([60])
+GT ys: 3.2200965881347656
+normalise
+Max Score:  0.71928203
+Median Score:  0.31394342
+torch.Size([60])
+GT ys: 3.692560911178589
+normalise
+Max Score:  0.76901996
+Median Score:  0.3428287
+torch.Size([60])
+GT ys: 3.6995596885681152
+normalise
+Max Score:  0.7697568
+Median Score:  0.30749753
+torch.Size([60])
+GT ys: 3.205083131790161
+normalise
+Max Score:  0.7177015
+Median Score:  0.32892653
+torch.Size([60])
+GT ys: 3.0459885597229004
+normalise
+Max Score:  0.70095307
+Median Score:  0.30525437
+torch.Size([60])
+GT ys: 2.9666025638580322
+normalise
+Max Score:  0.69259584
+Median Score:  0.28097245
+torch.Size([60])
+GT ys: 2.842402696609497
+normalise
+Max Score:  0.6795209
+Median Score:  0.267193
+torch.Size([60])
+GT ys: 2.9848389625549316
+normalise
+Max Score:  0.69451565
+Median Score:  0.3074034
+torch.Size([60])
+GT ys: 3.3762590885162354
+normalise
+Max Score:  0.7357218
+Median Score:  0.35482687
+torch.Size([60])
+GT ys: 3.4904117584228516
+normalise
+Max Score:  0.747739
+Median Score:  0.33729392
+torch.Size([60])
+GT ys: 2.754964590072632
+normalise
+Max Score:  0.6703159
+Median Score:  0.35204983
+torch.Size([60])
+GT ys: 3.119762420654297
+normalise
+Max Score:  0.70871955
+Median Score:  0.2674255
+torch.Size([60])
+GT ys: 3.1659533977508545
+normalise
+Max Score:  0.71358216
+Median Score:  0.31022558
+torch.Size([60])
+GT ys: 2.9346790313720703
+normalise
+Max Score:  0.68923515
+Median Score:  0.27507022
+torch.Size([60])
+GT ys: 3.3293585777282715
+normalise
+Max Score:  0.7307844
+Median Score:  0.34824255
+torch.Size([60])
+GT ys: 2.7802934646606445
+normalise
+Max Score:  0.6729825
+Median Score:  0.26631498
+torch.Size([60])
+GT ys: 3.3553881645202637
+normalise
+Max Score:  0.7335246
+Median Score:  0.36502025
+torch.Size([60])
+GT ys: 3.3263847827911377
+normalise
+Max Score:  0.7304713
+Median Score:  0.35091603
+torch.Size([60])
+GT ys: 3.653536319732666
+normalise
+Max Score:  0.7649117
+Median Score:  0.3143072
+torch.Size([60])
+GT ys: 2.465252161026001
+normalise
+Max Score:  0.63981694
+Median Score:  0.26650336
+torch.Size([60])
+GT ys: 3.356060028076172
+normalise
+Max Score:  0.7335954
+Median Score:  0.33656183
+torch.Size([60])
+GT ys: 3.076054811477661
+normalise
+Max Score:  0.7041183
+Median Score:  0.24539706
+torch.Size([60])
+GT ys: 3.315993070602417
+normalise
+Max Score:  0.7293773
+Median Score:  0.33597797
+torch.Size([60])
+GT ys: 3.760807752609253
+normalise
+Max Score:  0.7762046
+Median Score:  0.40928942
+torch.Size([60])
+GT ys: 3.2637529373168945
+normalise
+Max Score:  0.7238779
+Median Score:  0.3102893
+torch.Size([60])
+GT ys: 2.224538803100586
+normalise
+Max Score:  0.61447626
+Median Score:  0.29117155
+torch.Size([60])
+GT ys: 3.2415614128112793
+normalise
+Max Score:  0.7215417
+Median Score:  0.29911062
+torch.Size([60])
+GT ys: 3.8801465034484863
+normalise
+Max Score:  0.78876776
+Median Score:  0.27264604
+torch.Size([60])
+GT ys: 3.532224178314209
+normalise
+Max Score:  0.75214076
+Median Score:  0.36586946
+torch.Size([60])
+GT ys: 3.5554025173187256
+normalise
+Max Score:  0.75458086
+Median Score:  0.34149092
+torch.Size([60])
+GT ys: 3.528881311416626
+normalise
+Max Score:  0.75178885
+Median Score:  0.3213829
+torch.Size([60])
+GT ys: 3.313931465148926
+normalise
+Max Score:  0.72916037
+Median Score:  0.36994225
+torch.Size([60])
+GT ys: 3.2870233058929443
+normalise
+Max Score:  0.72632766
+Median Score:  0.33502245
+torch.Size([60])
+GT ys: 3.254873752593994
+normalise
+Max Score:  0.7229431
+Median Score:  0.2741736
+torch.Size([60])
+GT ys: 3.2437431812286377
+normalise
+Max Score:  0.7217714
+Median Score:  0.28641093
+torch.Size([60])
+GT ys: 3.502995729446411
+normalise
+Max Score:  0.7490638
+Median Score:  0.255549
+torch.Size([60])
+GT ys: 3.7270336151123047
+normalise
+Max Score:  0.77264905
+Median Score:  0.31370732
+torch.Size([60])
+GT ys: 3.3473448753356934
+normalise
+Max Score:  0.7326779
+Median Score:  0.29706424
+torch.Size([60])
+GT ys: 2.618922472000122
+normalise
+Max Score:  0.65599436
+Median Score:  0.29217255
+torch.Size([60])
+GT ys: 3.0134763717651367
+normalise
+Max Score:  0.6975304
+Median Score:  0.35151875
+torch.Size([60])
+GT ys: 3.1709301471710205
+normalise
+Max Score:  0.7141061
+Median Score:  0.3938268
+torch.Size([60])
+GT ys: 3.5274298191070557
+normalise
+Max Score:  0.7516361
+Median Score:  0.34772614
+torch.Size([60])
+GT ys: 3.461242437362671
+normalise
+Max Score:  0.74466825
+Median Score:  0.3020886
+torch.Size([60])
+GT ys: 3.6710989475250244
+normalise
+Max Score:  0.7667606
+Median Score:  0.34709957
+torch.Size([60])
+GT ys: 3.4367690086364746
+normalise
+Max Score:  0.7420919
+Median Score:  0.34888378
+torch.Size([60])
+GT ys: 2.803358316421509
+normalise
+Max Score:  0.6754105
+Median Score:  0.32966387
+torch.Size([60])
+GT ys: 2.9531474113464355
+normalise
+Max Score:  0.6911794
+Median Score:  0.32168856
+torch.Size([60])
+GT ys: 3.1019136905670166
+normalise
+Max Score:  0.7068406
+Median Score:  0.3483514
+torch.Size([60])
+GT ys: 3.353508472442627
+normalise
+Max Score:  0.73332673
+Median Score:  0.31059
+torch.Size([60])
+GT ys: 3.359746217727661
+normalise
+Max Score:  0.7339834
+Median Score:  0.30246586
+torch.Size([60])
+GT ys: 3.5609018802642822
+normalise
+Max Score:  0.75515974
+Median Score:  0.3495515
+torch.Size([60])
+GT ys: 2.2398457527160645
+normalise
+Max Score:  0.6160877
+Median Score:  0.32680875
+torch.Size([60])
+GT ys: 3.3703339099884033
+normalise
+Max Score:  0.73509806
+Median Score:  0.343696
+torch.Size([60])
+GT ys: 2.946575403213501
+normalise
+Max Score:  0.69048756
+Median Score:  0.25139108
+torch.Size([60])
+GT ys: 3.7297935485839844
+normalise
+Max Score:  0.77293956
+Median Score:  0.3238165
+torch.Size([60])
+GT ys: 2.9270153045654297
+normalise
+Max Score:  0.6884284
+Median Score:  0.27537584
+torch.Size([60])
+GT ys: 3.0073835849761963
+normalise
+Max Score:  0.696889
+Median Score:  0.37813318
+torch.Size([60])
+GT ys: 2.845261335372925
+normalise
+Max Score:  0.67982185
+Median Score:  0.2647851
+torch.Size([60])
+GT ys: 3.0258970260620117
+normalise
+Max Score:  0.69883794
+Median Score:  0.32681385
+torch.Size([60])
+GT ys: 2.5176961421966553
+normalise
+Max Score:  0.64533794
+Median Score:  0.2781165
+torch.Size([60])
+GT ys: 2.5389187335968018
+normalise
+Max Score:  0.64757216
+Median Score:  0.3223819
+torch.Size([60])
+GT ys: 3.387430191040039
+normalise
+Max Score:  0.7368978
+Median Score:  0.24102907
+torch.Size([60])
+GT ys: 3.0029022693634033
+normalise
+Max Score:  0.6964173
+Median Score:  0.3173416
+torch.Size([60])
+GT ys: 3.2556474208831787
+normalise
+Max Score:  0.7230246
+Median Score:  0.32572553
+torch.Size([60])
+GT ys: 2.6331725120544434
+normalise
+Max Score:  0.65749454
+Median Score:  0.31244835
+torch.Size([60])
+GT ys: 3.5388545989990234
+normalise
+Max Score:  0.75283873
+Median Score:  0.2709932
+torch.Size([60])
+GT ys: 2.738680839538574
+normalise
+Max Score:  0.6686017
+Median Score:  0.31290463
