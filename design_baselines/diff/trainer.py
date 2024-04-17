@@ -36,7 +36,7 @@ with suppress_output():
     from design_bench.datasets.continuous.ant_morphology_dataset import AntMorphologyDataset
     from design_bench.datasets.continuous.dkitty_morphology_dataset import DKittyMorphologyDataset
     from design_bench.datasets.continuous.superconductor_dataset import SuperconductorDataset
-    from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
+    # from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
 
 import numpy as np
 import pandas as pd
@@ -183,7 +183,7 @@ def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None
     if size is None:
         size = length
     else:
-        size = length // 5
+        size = length // 3
 
     sorted_indices = np.argsort(-y, axis=0).flatten()
     top_indices = sorted_indices[:size]
@@ -191,18 +191,18 @@ def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None
     y = y[top_indices]
     w = w[top_indices]
 
-    # target_xy = np.load("experiments/superconductor/Superconductor-RandomForest-v0_pseudo_target_123.npy", allow_pickle=True).item()
-    # target_x = np.array(target_xy["x"])
-    # target_y = np.array(target_xy["y"])[:, np.newaxis]
-    # target_w = get_weights(target_y, temp=temp)
+    target_xy = np.load("experiments/superconductor/Superconductor-RandomForest-v0_pseudo_target_123.npy", allow_pickle=True).item()
+    target_x = np.array(target_xy["x"])
+    target_y = np.array(target_xy["y"])[:, np.newaxis]
+    target_w = get_weights(target_y, temp=temp)
 
-    # print((x[:] == target_x[:]).sum())
-    # print((x[:] != target_x[:]).sum())
-    # print((y[:] == target_y[:]).sum())
-    # print((y[:] != target_y[:]).sum())
-    # print((w[:] == target_w[:]).sum())
-    # print((w[:] != target_w[:]).sum())
-    # exit()
+    print((x[:] == target_x[:]).sum())
+    print((x[:] != target_x[:]).sum())
+    print((y[:] == target_y[:]).sum())
+    print((y[:] != target_y[:]).sum())
+    print((w[:] == target_w[:]).sum())
+    print((w[:] != target_w[:]).sum())
+    exit()
 
     print(w.shape)
 
@@ -490,15 +490,15 @@ def run_training(
         save_top_k=1,  # save top model based on monitored loss
     )
     trainer = pl.Trainer(
-        gpus=int(use_gpu),
-        auto_lr_find=auto_tune_lr,
+        devices=1,
+        # auto_lr_find=auto_tune_lr,
         max_epochs=epochs,
-        max_steps=max_steps,
+        # max_steps=max_steps,
         max_time=train_time,
         logger=wandb_logger,
-        progress_bar_refresh_rate=20,
+        # progress_bar_refresh_rate=20,
         callbacks=[periodic_checkpoint_callback, val_checkpoint_callback],
-        track_grad_norm=2,  # logs the 2-norm of gradients
+        # track_grad_norm=2,  # logs the 2-norm of gradients
         limit_val_batches=1.0 if val_frac > 0 else 0,
         limit_test_batches=0,
     )

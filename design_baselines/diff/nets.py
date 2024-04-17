@@ -370,5 +370,5 @@ class DiffusionScore(pl.LightningModule):
         # loss = self.training_step(batch, batch_idx, log_prefix="val")
         x, y, w = batch
         loss = self.gen_sde.elbo_random_t_slice(x, y)
-        self.log(f"elbo_estimator", loss, prog_bar=True)
+        self.log(f"elbo_estimator", loss.mean(), prog_bar=True)
         return loss

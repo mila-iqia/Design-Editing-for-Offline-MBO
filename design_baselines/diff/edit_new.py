@@ -36,7 +36,7 @@ with suppress_output():
     from design_bench.datasets.continuous.ant_morphology_dataset import AntMorphologyDataset
     from design_bench.datasets.continuous.dkitty_morphology_dataset import DKittyMorphologyDataset
     from design_bench.datasets.continuous.superconductor_dataset import SuperconductorDataset
-    from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
+    # from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
 
 import numpy as np
 import pandas as pd
@@ -389,7 +389,7 @@ def run_evaluate(
     lmbds = [args.lamda]
 
     # use the max of the dataset instead
-    args.condition = task.y.max()
+    args.condition = task.y.max() * 3
 
     @torch.no_grad()
     def _get_trained_model():
@@ -428,11 +428,11 @@ def run_evaluate(
         xs_base = xs_base[-1]
         # This is a hyperparameter to trade off between the source distribution and the target distribution
         # See SDEdit paper for more details
-        t_ = torch.tensor([0.6]).expand(num_samples).view(-1, 1)
+        t_ = torch.tensor([0.4]).expand(num_samples).view(-1, 1)
         x_hat, target, std, g = target_model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
         # xs = [x_hat]
         # Denoise again
-        y_ = y_
+        y_ = y_ * 3
         xs = heun_sampler(model,
                           x_hat,
                           y_,
@@ -709,12 +709,6 @@ if __name__ == "__main__":
                 "experiments/tf-bind-8/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
             args.target_checkpoint_path = os.path.join(
                 "experiments/tf-bind-8/score_diffusion/123/wandb/target/files/checkpoints/last.ckpt")
-        elif args.task == "ant":
-            print("Editing ant")
-            checkpoint_path = os.path.join(
-                f"experiments/ant/score_diffusion/source/{args.seed}/wandb/latest-run/files/checkpoints/last.ckpt")
-            args.target_checkpoint_path = os.path.join(
-                f"experiments/ant/score_diffusion/target/{args.seed}/wandb/latest-run/files/checkpoints/last.ckpt")
         run_evaluate(taskname=args.task,
                      seed=args.seed,
                      hidden_size=args.hidden_size,
