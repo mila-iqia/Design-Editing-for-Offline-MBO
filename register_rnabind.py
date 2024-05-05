@@ -24,7 +24,7 @@ if __name__ == '__main__':
                           dataset_kwargs=dict(
                               max_samples=None,
                               distribution=None,
-                              max_percentile=50,
+                              max_percentile=80,
                               min_percentile=0,
                           ),
 
@@ -58,3 +58,5 @@ if __name__ == '__main__':
     print(task.x[0], task.y[0])
     print(task.x.shape, task.y.shape)
     print(x_star.shape, y_star.shape)
+
+    print(task.y.max(), task.y.min())
