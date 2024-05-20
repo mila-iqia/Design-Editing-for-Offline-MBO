@@ -4,6 +4,7 @@ from utils import *
 import design_bench
 import argparse
 import os
+import register_levy
 
 device = torch.device('cuda:' + '0')
 
@@ -73,52 +74,31 @@ def design_opt(args):
     task = design_bench.make(args.task)
     load_y(args.task)
     task_y0 = task.y
-    task_x, task_y, length = process_data(task, args.task, task_y0)
+    task_x, task_y, shape0 = process_data(task, args.task, task_y0)
     task_x = torch.Tensor(task_x).to(device)
     task_y = torch.Tensor(task_y).to(device)
 
-    indexs = torch.argsort(-task_y.squeeze())
-    args.topk = length // 3
-    index = indexs[:args.topk]
+    indexs = torch.argsort(task_y.squeeze())
+    index = indexs[-args.topk:]
     x_init = copy.deepcopy(task_x[index])
-    y_init = copy.deepcopy(task_y[index])
     scores = []
-    new_design = []
-
-    if args.method == 'simple':
-        proxy = SimpleMLP(task_x.shape[1]).to(device)
-        proxy.load_state_dict(
-            torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-    else:
-        proxy1 = SimpleMLP(task_x.shape[1]).to(device)
-        proxy1.load_state_dict(
-            torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-        proxy2 = SimpleMLP(task_x.shape[1]).to(device)
-        proxy2.load_state_dict(
-            torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-        proxy3 = SimpleMLP(task_x.shape[1]).to(device)
-        proxy3.load_state_dict(
-            torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-
     for x_i in range(x_init.shape[0]):
-        # if x_i == 10: break
-        # if args.method == 'simple':
-        #     proxy = SimpleMLP(task_x.shape[1]).to(device)
-        #     proxy.load_state_dict(
-        #         torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-        # else:
-        #     proxy1 = SimpleMLP(task_x.shape[1]).to(device)
-        #     proxy1.load_state_dict(
-        #         torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-        #     proxy2 = SimpleMLP(task_x.shape[1]).to(device)
-        #     proxy2.load_state_dict(
-        #         torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-        #     proxy3 = SimpleMLP(task_x.shape[1]).to(device)
-        #     proxy3.load_state_dict(
-        #         torch.load(os.path.join(args.store_path, args.task + "_proxy_" + str(args.seed) + ".pt"), map_location='cuda:0'))
-        candidate = copy.deepcopy(x_init[x_i:x_i + 1])
-        gt_score_before = task.predict(candidate.cpu().numpy())
-        estimate_score_before = proxy(candidate)
+        if args.method == 'simple':
+            proxy = SimpleMLP(task_x.shape[1]).to(device)
+            proxy.load_state_dict(
+                torch.load(args.store_path + args.task + "_proxy_" + str(args.seed) + ".pt", map_location='cuda:0'))
+        else:
+            proxy1 = SimpleMLP(task_x.shape[1]).to(device)
+            proxy1.load_state_dict(
+                torch.load(args.store_path + args.task + "_proxy_" + str(args.seed) + ".pt", map_location='cuda:0'))
+            proxy2 = SimpleMLP(task_x.shape[1]).to(device)
+            proxy2.load_state_dict(
+                torch.load(args.store_path + args.task + "_proxy_" + str((args.seed + 1) % 9) + ".pt", map_location='cuda:0'))
+            proxy3 = SimpleMLP(task_x.shape[1]).to(device)
+            proxy3.load_state_dict(
+                torch.load(args.store_path + args.task + "_proxy_" + str((args.seed + 2) % 9) + ".pt", map_location='cuda:0'))
+        candidate = x_init[x_i:x_i + 1]
+        score_before, _ = evaluate_sample(task, candidate, args.task, shape0)
         candidate.requires_grad = True
         candidate_opt = optim.Adam([candidate], lr=args.ft_lr)
         for i in range(1, args.Tmax + 1):
@@ -126,28 +106,25 @@ def design_opt(args):
                 loss = -proxy(candidate)
             elif args.method == 'ensemble':
                 loss = -1.0 / 3.0 * (proxy1(candidate) + proxy2(candidate) + proxy3(candidate))
+            elif args.method == 'min':
+                # loss = -torch.min(proxy1(candidate), proxy2(candidate), proxy3(candidate))
+                stacked_tensors = torch.stack([proxy1(candidate), proxy2(candidate), proxy3(candidate)], dim=0)
+                minimum = torch.min(stacked_tensors, dim=0).values
+                loss = -minimum
             candidate_opt.zero_grad()
             loss.backward()
             candidate_opt.step()
-        gt_score_after = task.predict(candidate.cpu().detach().numpy())
-        estimate_score_after = proxy(candidate)
-        print(f"\nindex: {x_i}")
-        # print(f"original design: {x_init[x_i]}")
-        print(f"gt score before: {y_init[x_i].squeeze().cpu().numpy()}")
-        print(f"proxy score before: {estimate_score_before.squeeze()}")
-        # print(f"optimized design: {candidate.data}")
-        print(f"gt score after: {gt_score_after.squeeze()}")
-        print(f"proxy score after: {estimate_score_after.squeeze()}")
-        # scores.append(estimate_score_after.squeeze().cpu().detach().numpy())
-        scores.append(y_init[x_i].squeeze().cpu().numpy())
-        new_design.append(candidate.squeeze().cpu().detach().numpy())
-        # x_init[x_i] = candidate.data
-    # save to dict adn store in file
-    to_save = {}
-    to_save["x"] = new_design
-    to_save["y"] = scores
-    # save to file with numpy
-    np.save(os.path.join(args.store_path, args.task + "_pseudo_target_" + str(args.seed) + ".npy"), to_save)
+            if i % args.interval == 0:
+                score_after, _ = evaluate_sample(task, candidate.data, args.task, shape0)
+                # print("candidate {} score before {} score now {}".format(x_i, score_before.squeeze(),
+                #                                                          score_after.squeeze()))
+                scores.append(score_after.squeeze())
+        x_init[x_i] = candidate.data
+    from statistics import median
+    max_score = max(scores)
+    median_score = median(scores)
+    print("After  max {} median {}\n".format(max_score, median_score))
+    return max_score, median_score
 
 
 def experiment():
@@ -155,7 +132,7 @@ def experiment():
     seeds = list(range(9))
 
     # Training Proxy
-    args.mode = 'train'
+    args.mode = 'design'
     for s in seeds:
         print("Current seed is " + str(s), end="\t")
         args.seed = s
@@ -164,8 +141,8 @@ def experiment():
             print("Current task is " + str(t))
             args.task = t
             print("this is my setting", args)
-            train_proxy(args)
-
+            # train_proxy(args)
+            design_opt(args)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="pairwise offline")
@@ -174,25 +151,26 @@ if __name__ == "__main__":
     parser.add_argument('--task', choices=['Superconductor-RandomForest-v0', 'HopperController-Exact-v0',
                                            'AntMorphology-Exact-v0', 'DKittyMorphology-Exact-v0', 'TFBind8-Exact-v0',
                                            'CIFARNAS-Exact-v0', 'TFBind10-Exact-v0'],
-                        type=str, default='CIFARNAS-Exact-v0')
+                        type=str, default='Levy-Exact-v0')
     parser.add_argument('--mode', choices=['design', 'train'], type=str, default='design')
     # grad descent to train proxy
-    parser.add_argument('--epochs', default=2000, type=int)
+    parser.add_argument('--epochs', default=200, type=int)
     parser.add_argument('--lr', default=1e-3, type=float)
     parser.add_argument('--bs', default=128, type=int)
     parser.add_argument('--wd', default=0.0, type=float)
     # grad ascent to obtain design
-    parser.add_argument('--Tmax', default=1, type=int)  # Usually 100 for discrete tasks and 200 for continuous tasks
-    parser.add_argument('--ft_lr', default=0, type=float)  # Usually 1e-1 for discrete tasks and 1e-3 for continuous tasks
-    parser.add_argument('--topk', default=1000, type=int)
+    parser.add_argument('--Tmax', default=200, type=int)  # Usually 100 for discrete tasks and 200 for continuous tasks
+    parser.add_argument('--ft_lr', default=1e-3, type=float)  # Usually 1e-1 for discrete tasks and 1e-3 for continuous tasks
+    parser.add_argument('--topk', default=256, type=int)
     parser.add_argument('--interval', default=100, type=int)
-    parser.add_argument('--method', choices=['ensemble', 'simple'], type=str, default='simple')
+    parser.add_argument('--method', choices=['ensemble', 'simple'], type=str, default='min')
     parser.add_argument('--seed1', default=1, type=int)
     parser.add_argument('--seed2', default=10, type=int)
     parser.add_argument('--seed3', default=100, type=int)
-    parser.add_argument('--store_path', default="generated_target_dist/", type=str)
+    parser.add_argument('--store_path', default="levy/", type=str)
     args = parser.parse_args()
-    if args.mode == 'train':
-        train_proxy(args)
-    elif args.mode == 'design':
-        design_opt(args)
+    # if args.mode == 'train':
+    #     train_proxy(args)
+    # elif args.mode == 'design':
+    #     design_opt(args)
+    experiment()
