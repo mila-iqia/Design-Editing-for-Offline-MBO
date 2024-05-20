@@ -10,7 +10,7 @@ class SimpleMLP(nn.Module):
 
     def __init__(self,
                  in_dim,
-                 hid_dim=2048,
+                 hid_dim=1024,
                  out_dim=1):
         super().__init__()
         self.fc1 = nn.Linear(in_dim, hid_dim)

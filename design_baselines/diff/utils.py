@@ -57,7 +57,7 @@ y_max = None
 def load_y(task_name):
     global y_min
     global y_max
-    dic2y = np.load("/home/admin1/Documents/Design-Editing-with-SDE-for-Offline-MBO/npy/dic2y_new.npy", allow_pickle=True).item()
+    dic2y = np.load("npy/dic2y.npy", allow_pickle=True).item()
     y_min, y_max = dic2y[task_name]
 
 
@@ -72,10 +72,10 @@ def process_data(task, task_name, task_y0=None):
             task_x = task_x[index]
             task_y0 = task_y0[index]
     elif task_name in ['Superconductor-RandomForest-v0', 'HopperController-Exact-v0',
-                       'AntMorphology-Exact-v0', 'DKittyMorphology-Exact-v0', "Levy-Exact-v0"]:
+                       'AntMorphology-Exact-v0', 'DKittyMorphology-Exact-v0']:
         task_x = copy.deepcopy(task.x)
     task_x = task.normalize_x(task_x)
-    shape0 = task_x.shape
+    shape0 = task_x.shape[0]
     task_x = task_x.reshape(task_x.shape[0], -1)
     if task_name in ['UTR-ResNet-v0']:
         mean_y = np.mean(task_y0)
@@ -83,8 +83,27 @@ def process_data(task, task_name, task_y0=None):
         task_y = (task_y0 - mean_y) / std_y
     else:
         task_y = task.normalize_y(task_y0)
+    
+    if task.is_discrete:
+        task.map_to_logits()
+    task.map_normalize_x()
+    task.map_normalize_y()
 
     return task_x, task_y, shape0
+
+
+def process_data_new(task, task_name, task_y0=None):
+    if task.is_discrete:
+        task.map_to_logits()
+    task.map_normalize_x()
+    task.map_normalize_y()
+
+    task_x = copy.deepcopy(task.x)
+    task_y = copy.deepcopy(task.y)
+    if task.is_discrete:
+        task_x = task_x.reshape(task_x.shape[0], -1)
+
+    return task_x, task_y, task_x.shape[0]
 
 
 def evaluate_sample(task, x_init, task_name, shape0):
@@ -93,7 +112,7 @@ def evaluate_sample(task, x_init, task_name, shape0):
                      'CIFARNAS-Exact-v0']:
         X1 = x_init.reshape(-1, shape0[1], shape0[2])
     elif task_name in ['Superconductor-RandomForest-v0', 'HopperController-Exact-v0',
-                       'AntMorphology-Exact-v0', 'DKittyMorphology-Exact-v0', "Levy-Exact-v0"]:
+                       'AntMorphology-Exact-v0', 'DKittyMorphology-Exact-v0']:
         X1 = x_init
     X1 = task.denormalize_x(X1)
     if task_name in ['TFBind8-Exact-v0', 'GFP-Transformer-v0', 'UTR-ResNet-v0', 'TFBind10-Exact-v0',

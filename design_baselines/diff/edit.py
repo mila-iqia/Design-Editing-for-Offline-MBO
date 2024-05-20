@@ -1,16 +1,11 @@
+import copy
 import json
 import os
-import random
-import string
-import uuid
-import shutil
 
-from typing import Optional, Union
 from pprint import pprint
 
 import configargparse
 
-import sys
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
 
@@ -28,27 +23,68 @@ def suppress_output():
 with suppress_output():
     import design_bench
 
-    from design_bench.datasets.discrete.tf_bind_8_dataset import TFBind8Dataset
-    from design_bench.datasets.discrete.tf_bind_10_dataset import TFBind10Dataset
-    from design_bench.datasets.discrete.nas_bench_dataset import NASBenchDataset
-    from design_bench.datasets.discrete.chembl_dataset import ChEMBLDataset
-
-    from design_bench.datasets.continuous.ant_morphology_dataset import AntMorphologyDataset
-    from design_bench.datasets.continuous.dkitty_morphology_dataset import DKittyMorphologyDataset
-    from design_bench.datasets.continuous.superconductor_dataset import SuperconductorDataset
     # from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
+    # from register_dataset.register_rosenbrock import RosenbrockDataset, RosenbrockOracle
+    # design_bench.register('Rosenbrock-Exact-v0', RosenbrockDataset, RosenbrockOracle,
+    #                       # keyword arguments for building the dataset
+    #                       dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
+    #                       # keyword arguments for building the exact oracle
+    #                       oracle_kwargs=dict(noise_std=0.0)
+    #                       )
+    # from register_dataset.register_rastrigin import RastriginDataset, RastriginOracle
+    # design_bench.register('Rastrigin-Exact-v0', RastriginDataset, RastriginOracle,
+    #                       # keyword arguments for building the dataset
+    #                       dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
+    #                       # keyword arguments for building the exact oracle
+    #                       oracle_kwargs=dict(noise_std=0.0)
+    #                       )
+    from register_dataset.register_levy import LevyDataset, LevyOracle
+    design_bench.register('Levy-Exact-v0', LevyDataset, LevyOracle,
+                          # keyword arguments for building the dataset
+                          dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
+                          # keyword arguments for building the exact oracle
+                          oracle_kwargs=dict(noise_std=0.0)
+                          )
+    # from register_dataset.register_rnabind_random import RNABindDataset
+    # from design_bench.oracles.sklearn import RandomForestOracle
+    # design_bench.register('RNABind-RandomForest-v0', RNABindDataset, RandomForestOracle,
+    #                       # keyword arguments for building the dataset
+    #                       dataset_kwargs=dict(
+    #                           max_samples=None,
+    #                           distribution=None,
+    #                           max_percentile=50,
+    #                           min_percentile=0,
+    #                       ),
+    #
+    #                       # keyword arguments for building RandomForest oracle
+    #                       oracle_kwargs=dict(
+    #                           noise_std=0.0,
+    #                           max_samples=2000,
+    #                           distribution=None,
+    #                           max_percentile=100,
+    #                           min_percentile=0,
+    #
+    #                           # parameters used for building the model
+    #                           model_kwargs=dict(n_estimators=100,
+    #                                             max_depth=100,
+    #                                             max_features="auto"),
+    #                       ))
+    # from register_dataset.register_rnabind_exact import RNABindDataset, RNABindOracle
+    # design_bench.register('RNABind-Exact-v0', RNABindDataset, RNABindOracle,
+    #                       # keyword arguments for building the dataset
+    #                       dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
+    #                       # keyword arguments for building the exact oracle
+    #                       oracle_kwargs=dict(noise_std=0.0)
+    #                       )
 
 import numpy as np
-import pandas as pd
 import pytorch_lightning as pl
-import pickle as pkl
 
 import torch
 from torch.utils.data import Dataset, DataLoader
 
 from nets import DiffusionTest, DiffusionScore
 from util import TASKNAME2TASK, configure_gpu, set_seed, get_weights
-from forward import ForwardModel
 
 args_filename = "args.json"
 checkpoint_dir = "checkpoints"
@@ -115,12 +151,19 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
     else:
         x = task.x[shuffle_idx]
 
+    # y = temp_get_super_y(task)
     y = task.y
     y = y[shuffle_idx]
     if not task.is_discrete:
         x = x.reshape(-1, task.x.shape[-1])
     y = y.reshape(-1, 1)
+    # w = get_weights(y, base_temp=0.03 * length)
+    # w = get_weights(y, base_temp=0.1)
     w = get_weights(y, temp=temp)
+
+    # TODO: Modify
+    # full_ds = DKittyMorphologyDataset()
+    # y = (y - full_ds.y.min()) / (full_ds.y.max() - full_ds.y.min())
 
     print(w)
     print(w.shape)
@@ -135,6 +178,7 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
         task,
         x[:train_length],
         y[:train_length],
+        # None,
         w[:train_length],
         device,
         mode='train')
@@ -142,6 +186,61 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
         task,
         x[train_length:],
         y[train_length:],
+        # None,
+        w[train_length:],
+        device,
+        mode='val')
+
+    return train_dataset, val_dataset
+
+
+def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None, temp=None):
+    length = task.y.shape[0]
+    shuffle_idx = np.arange(length)
+    shuffle_idx = np.random.shuffle(shuffle_idx)
+
+    if task.is_discrete:
+        task.map_to_logits()
+        x = task.x[shuffle_idx]
+        x = x.reshape(x.shape[1:])
+        x = x.reshape(x.shape[0], -1)
+    else:
+        x = task.x[shuffle_idx]
+
+    # y = temp_get_super_y(task)
+    y = task.y
+    y = y[shuffle_idx]
+    if not task.is_discrete:
+        x = x.reshape(-1, task.x.shape[-1])
+    y = y.reshape(-1, 1)
+    w = get_weights(y, temp=temp)
+
+    # Sort y in descending order and select the top 'size' instances
+    sorted_indices = np.argsort(-y, axis=0).flatten()
+    top_indices = sorted_indices[:size]
+    x = x[top_indices]
+    y = y[top_indices]
+    w = w[top_indices]
+
+    if val_frac is None:
+        val_frac = 0
+
+    val_length = int(length * val_frac)
+    train_length = length - val_length
+
+    train_dataset = RvSDataset(
+        task,
+        x[:train_length],
+        y[:train_length],
+        # None,
+        w[:train_length],
+        device,
+        mode='train')
+    val_dataset = RvSDataset(
+        task,
+        x[train_length:],
+        y[train_length:],
+        # None,
         w[train_length:],
         device,
         mode='val')
@@ -151,7 +250,7 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
 
 class RvSDataModule(pl.LightningDataModule):
 
-    def __init__(self, task, batch_size, num_workers, val_frac, device, temp):
+    def __init__(self, task, batch_size, num_workers, val_frac, device, temp, top_candidates_size=None):
         super().__init__()
 
         self.task = task
@@ -162,10 +261,15 @@ class RvSDataModule(pl.LightningDataModule):
         self.train_dataset = None
         self.val_dataset = None
         self.temp = temp
+        self.top_candidates_size = top_candidates_size
 
     def setup(self, stage=None):
-        self.train_dataset, self.val_dataset = split_dataset(
-            self.task, self.val_frac, self.device, self.temp)
+        if self.top_candidates_size is not None:
+            self.train_dataset, self.val_dataset = split_dataset_based_on_top_candidates(
+                self.task, size=self.top_candidates_size, val_frac=self.val_frac, device=self.device, temp=self.temp)
+        else:
+            self.train_dataset, self.val_dataset = split_dataset(
+                self.task, self.val_frac, self.device, self.temp)
 
     def train_dataloader(self):
         train_loader = DataLoader(self.train_dataset,
@@ -180,7 +284,28 @@ class RvSDataModule(pl.LightningDataModule):
         return val_loader
 
 
-@torch.no_grad()
+def log_args(
+        args: configargparse.Namespace,
+        wandb_logger: pl.loggers.wandb.WandbLogger,
+) -> None:
+    """Log arguments to a file in the wandb directory."""
+    wandb_logger.log_hyperparams(args)
+
+    args.wandb_entity = wandb_logger.experiment.entity
+    args.wandb_project = wandb_logger.experiment.project
+    args.wandb_run_id = wandb_logger.experiment.id
+    args.wandb_path = wandb_logger.experiment.path
+
+    out_directory = wandb_logger.experiment.dir
+    pprint(f"out_directory: {out_directory}")
+    args_file = os.path.join(out_directory, args_filename)
+    with open(args_file, "w") as f:
+        try:
+            json.dump(args.__dict__, f)
+        except AttributeError:
+            json.dump(args, f)
+
+
 def run_evaluate(
     taskname,
     seed,
@@ -195,14 +320,20 @@ def run_evaluate(
     normalise_y=False,
 ):
     set_seed(seed)
-    task = design_bench.make(TASKNAME2TASK[taskname])
+    # task = design_bench.make(TASKNAME2TASK[taskname])
+
+    if taskname != 'tf-bind-10':
+        task = design_bench.make(TASKNAME2TASK[taskname])
+    else:
+        task = design_bench.make(TASKNAME2TASK[taskname],
+                                 dataset_kwargs={"max_samples": 30000})
+
+    if task.is_discrete:
+        task.map_to_logits()
     if normalise_x:
         task.map_normalize_x()
     if normalise_y:
         task.map_normalize_y()
-
-    if task.is_discrete:
-        task.map_to_logits()
 
     if not args.score_matching:
         model = DiffusionTest.load_from_checkpoint(
@@ -229,17 +360,18 @@ def run_evaluate(
             beta_max=args.beta_max,
             T0=args.T0,
             dropout_p=args.dropout_p)
-        target_model = DiffusionScore.load_from_checkpoint(
-            checkpoint_path=target_checkpoint_path,
-            taskname=taskname,
-            task=task,
-            learning_rate=args.learning_rate,
-            hidden_size=args.hidden_size,
-            vtype=args.vtype,
-            beta_min=args.beta_min,
-            beta_max=args.beta_max,
-            T0=args.T0,
-            dropout_p=args.dropout_p)
+
+    target_model = DiffusionScore.load_from_checkpoint(
+        checkpoint_path=target_checkpoint_path,
+        taskname=taskname,
+        task=task,
+        learning_rate=args.learning_rate,
+        hidden_size=args.hidden_size,
+        vtype=args.vtype,
+        beta_min=args.beta_min,
+        beta_max=args.beta_max,
+        T0=args.T0,
+        dropout_p=args.dropout_p)
 
     model = model.to(device)
     model.eval()
@@ -290,12 +422,30 @@ def run_evaluate(
                     pass
         return xs
 
+
     num_steps = args.num_steps
-    num_samples = 512
+    num_samples = 256
+    # num_samples = 10
+
+    # lmbds = [0., 1.]
     lmbds = [args.lamda]
+
+    # use the max of the dataset instead
     args.condition = task.y.max()
 
+    @torch.no_grad()
+    def _get_trained_model():
+        checkpoint_path = f"experiments/{taskname}/forward_model/123/wandb/latest-run/files/checkpoints/last.ckpt"
+        model = ForwardModel.load_from_checkpoint(
+            checkpoint_path=checkpoint_path,
+            taskname=taskname,
+            task=task, )
+
+        return model
+
     # sample and plot
+    designs = []
+    results = []
     for lmbd in lmbds:
         if not task.is_discrete:
             x_0 = torch.randn(num_samples, task.x.shape[-1],
@@ -305,56 +455,118 @@ def run_evaluate(
                               task.x.shape[-1] * task.x.shape[-2],
                               device=device)  # init from prior
 
+        print(x_0.shape)
+
         # Generate a sample from the source distribution
         y_ = torch.ones(num_samples).to(device) * args.condition
-        xs_base = heun_sampler(model,
-                          x_0,
-                          y_,
-                          num_steps,
-                          start_step=0,
-                          end_step=1000,
-                          lmbd=lmbd,
-                          keep_all_samples=True)
+
+        if not args.edit:
+            print("using source ddom...")
+            xs_base = heun_sampler(model,
+                                   x_0,
+                                   y_,
+                                   num_steps,
+                                   start_step=0,
+                                   end_step=1000,
+                                   lmbd=lmbd,
+                                   keep_all_samples=True)
+            xs_base = [xs_base[-1].to(device)]
+        else:
+            print("using offline dataset...")
+            task_x = copy.deepcopy(task.x)
+            task_y = copy.deepcopy(task.y)
+            if task.is_discrete:
+                task_x = task_x.reshape(task_x.shape[0], -1)
+            task_x = torch.Tensor(task_x).to(device)
+            task_y = torch.Tensor(task_y).to(device)
+            index = torch.argsort(-task_y.squeeze())
+            index = index[:num_samples]
+            x_0 = copy.deepcopy(task_x[index])
+            xs_base = [torch.asarray(x_0, device=device)]
 
         # Editing towards the target distribution
         xs_base = xs_base[-1]
         # This is a hyperparameter to trade off between the source distribution and the target distribution
         # See SDEdit paper for more details
-        t_ = torch.tensor([0.2]).expand(num_samples).view(-1, 1)
-        x_hat, target, std, g = target_model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
+
+        t_prop = args.t
+
+        t_ = torch.tensor([t_prop]).expand(num_samples).view(-1, 1).to(device)
+        x_hat, target, std, g = model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
         # xs = [x_hat]
         # Denoise again
-        xs = heun_sampler(model,
+
+        target_xy = np.load(f"experiments/{taskname}/{TASKNAME2TASK[taskname]}_pseudo_target_123.npy", allow_pickle=True).item()
+        target_x = np.array(target_xy["x"])
+        target_y = np.array(target_xy["pred_y"])[:, np.newaxis]
+        y_max = np.max(target_y)
+        y_mean = np.mean(target_y)
+        y_std = np.std(target_y)
+        print(y_[0])
+        print(y_max, y_mean, y_std)
+        y_ = torch.ones(num_samples).to(device) * y_max * 1
+
+        xs = heun_sampler(target_model,
                           x_hat,
                           y_,
                           num_steps,
-                          start_step=800,
+                          start_step=int(1000 * (1 - t_prop)),
                           end_step=1000,
                           lmbd=lmbd,
                           keep_all_samples=True)
+        if not args.edit:
+            xs = [xs_base]
 
         ctr = 0
-        for qqq in xs:
+        # pred_model = _get_trained_model()
+        # preds = []
+        for qqq in [xs[-1]]:
             ctr += 1
+            print(qqq.shape)
             if not qqq.isnan().any():
+                designs.append(qqq.cpu().numpy())
 
                 if not task.is_discrete:
                     ys = task.predict(qqq.cpu().numpy())
                 else:
                     qqq = qqq.view(qqq.size(0), -1, task.x.shape[-1])
                     ys = task.predict(qqq.cpu().numpy())
-                    print(ys)
 
-                # print("GT ys: {}".format(ys.max()))
+                # pred_ys = pred_model.mlp(qqq)
+                # preds.append(pred_ys.cpu().numpy())
+
+                print("GT ys: {}".format(ys.max()))
+                # print("Pred ys: {}".format(pred_ys.max()))
                 if normalise_y:
-                    # print("normalise")
+                    print("normalise")
+                    prop_v = (ys > task.y.max()).mean()
+                    print(prop_v)
                     ys = task.denormalize_y(ys)
-                    print(ys.mean())
                 else:
                     print("none")
-                    print(ys.max())
+                dic2y = np.load("npy/dic2y_new.npy", allow_pickle=True).item()
+                y_min, y_max = dic2y[TASKNAME2TASK[taskname]]
+                max_v = (np.max(ys) - y_min) / (y_max - y_min)
+                med_v = (np.median(ys) - y_min) / (y_max - y_min)
+                print("Max Score: ", max_v)
+                print("Median Score: ", med_v)
+                results.append(ys)
+
+                if not os.path.exists(f"results/{taskname}"):
+                    os.makedirs(f"results/{taskname}")
+
+                with open(f"results/{taskname}/{args.save_prefix}_{seed}.json", "w") as f:
+                    json.dump({
+                        "max": float(max_v),
+                        "med": float(med_v),
+                        "prop": float(prop_v)
+                    }, f)
+
             else:
                 print("fuck")
+
+    designs = np.concatenate(designs, axis=0)
+    results = np.concatenate(results, axis=0)
 
 
 if __name__ == "__main__":
@@ -370,14 +582,15 @@ if __name__ == "__main__":
     parser.add_argument('--mode',
                         choices=['train', 'eval'],
                         default='train',
-                        required=True)
+                        )
     parser.add_argument('--task',
                         choices=list(TASKNAME2TASK.keys()),
-                        required=True)
+                        default='ant',
+                        )
     # reproducibility
     parser.add_argument(
         "--seed",
-        default=None,
+        default=0,
         type=int,
         help=
         "sets the random seed; if this is not specified, it is chosen randomly",
@@ -390,10 +603,10 @@ if __name__ == "__main__":
     parser.add_argument("--name", type=str, help="Experiment name")
     parser.add_argument("--score_matching", action='store_true', default=False)
     # training
-    train_time_group = parser.add_mutually_exclusive_group(required=True)
+    train_time_group = parser.add_mutually_exclusive_group(required=False)
     train_time_group.add_argument(
         "--epochs",
-        default=None,
+        default=200,
         type=int,
         help="the number of training epochs.",
     )
@@ -407,7 +620,7 @@ if __name__ == "__main__":
     )
     train_time_group.add_argument(
         "--train_time",
-        default=None,
+        default="00:01:00:00",
         type=str,
         help="how long to train, specified as a DD:HH:MM:SS str",
     )
@@ -416,35 +629,32 @@ if __name__ == "__main__":
                         type=int,
                         help="Number of workers")
     checkpoint_frequency_group = parser.add_mutually_exclusive_group(
-        required=True)
+        required=False)
     checkpoint_frequency_group.add_argument(
         "--checkpoint_every_n_epochs",
-        default=None,
         type=int,
         help="the period of training epochs for saving checkpoints",
     )
     checkpoint_frequency_group.add_argument(
         "--checkpoint_every_n_steps",
-        default=None,
         type=int,
         help="the period of training gradient steps for saving checkpoints",
     )
     checkpoint_frequency_group.add_argument(
         "--checkpoint_time_interval",
-        default=None,
         type=str,
         help="how long between saving checkpoints, specified as a HH:MM:SS str",
     )
     parser.add_argument(
         "--val_frac",
         type=float,
-        required=True,
+        default=0.1,
         help="fraction of data to use for validation",
     )
     parser.add_argument(
         "--use_gpu",
         action="store_true",
-        default=False,
+        default=True,
         help="place networks and data on the GPU",
     )
     parser.add_argument('--simple_clip', action="store_true", default=False)
@@ -554,24 +764,101 @@ if __name__ == "__main__":
         default=20.0,
     )
     parser.add_argument(
+        "--top_candidates_size",
+        type=int,
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
         "--target_checkpoint_path",
         type=str,
-        required=True,
+        required=False,
         help="Path to the target model checkpoint",
+    )
+    parser.add_argument(
+        "--save_prefix",
+        type=str,
+        required=False,
+        default="unknown",
+    )
+    parser.add_argument(
+        "--edit",
+        type=eval,
+        choices=[True, False],
+        default=False,
+    )
+    parser.add_argument(
+        "--t",
+        type=float,
+        default=0.4,
+        required=False,
     )
     args = parser.parse_args()
 
     wandb_project = "score-matching " if args.score_matching else "sde-flow"
 
-    args.seed = np.random.randint(2**31 - 1) if args.seed is None else args.seed
+    args.seed = np.random.randint(2 ** 31 - 1) if args.seed is None else args.seed
     set_seed(args.seed + 1)
     device = configure_gpu(args.use_gpu, args.which_gpu)
 
     expt_save_path = f"./experiments/{args.task}/{args.name}/{args.seed}"
 
     if args.mode == 'eval':
-        checkpoint_path = os.path.join(
-            expt_save_path, "wandb/latest-run/files/checkpoints/last.ckpt")
+        if args.task == "superconductor":
+            checkpoint_path = os.path.join(
+                "experiments/superconductor/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/superconductor/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
+        elif args.task == "tf-bind-8":
+            checkpoint_path = os.path.join(
+                "experiments/tf-bind-8/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/tf-bind-8/score_diffusion/123/wandb/target_grad_gt/files/checkpoints/last.ckpt")
+        elif args.task == "tf-bind-10":
+            checkpoint_path = os.path.join(
+                "experiments/tf-bind-10/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/tf-bind-10/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+        elif args.task == "dkitty":
+            checkpoint_path = os.path.join(
+                "experiments/dkitty/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/dkitty/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
+        elif args.task == "ant":
+            checkpoint_path = os.path.join(
+                "experiments/ant/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/ant/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
+        elif args.task == "nas":
+            checkpoint_path = os.path.join(
+                "experiments/nas/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/nas/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+        elif args.task == "hopper":
+            checkpoint_path = os.path.join(
+                "experiments/hopper/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/hopper/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+        elif args.task == "rosenbrock":
+            checkpoint_path = os.path.join(
+                "experiments/rosenbrock/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/rosenbrock/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
+        elif args.task == "rastrigin":
+            checkpoint_path = os.path.join(
+                "experiments/rastrigin/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/rastrigin/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
+        elif args.task == "levy":
+            checkpoint_path = os.path.join(
+                "experiments/levy/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/levy/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
+        elif args.task == "rnabind":
+            checkpoint_path = os.path.join(
+                "experiments/rnabind/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/rnabind/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
         run_evaluate(taskname=args.task,
                      seed=args.seed,
                      hidden_size=args.hidden_size,
