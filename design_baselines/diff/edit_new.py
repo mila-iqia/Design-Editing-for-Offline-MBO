@@ -130,6 +130,7 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
     # full_ds = DKittyMorphologyDataset()
     # y = (y - full_ds.y.min()) / (full_ds.y.max() - full_ds.y.min())
 
+    print(w)
     print(w.shape)
 
     if val_frac is None:
@@ -180,37 +181,17 @@ def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None
     w = get_weights(y, temp=temp)
 
     # Sort y in descending order and select the top 'size' instances
-    if size is None:
-        size = length
-    else:
-        size = length // 3
-
     sorted_indices = np.argsort(-y, axis=0).flatten()
     top_indices = sorted_indices[:size]
     x = x[top_indices]
     y = y[top_indices]
     w = w[top_indices]
 
-    target_xy = np.load("experiments/superconductor/Superconductor-RandomForest-v0_pseudo_target_123.npy", allow_pickle=True).item()
-    target_x = np.array(target_xy["x"])
-    target_y = np.array(target_xy["y"])[:, np.newaxis]
-    target_w = get_weights(target_y, temp=temp)
-
-    print((x[:] == target_x[:]).sum())
-    print((x[:] != target_x[:]).sum())
-    print((y[:] == target_y[:]).sum())
-    print((y[:] != target_y[:]).sum())
-    print((w[:] == target_w[:]).sum())
-    print((w[:] != target_w[:]).sum())
-    exit()
-
-    print(w.shape)
-
     if val_frac is None:
         val_frac = 0
 
-    val_length = int(size * val_frac)
-    train_length = size - val_length
+    val_length = int(length * val_frac)
+    train_length = length - val_length
 
     train_dataset = RvSDataset(
         task,
@@ -248,8 +229,12 @@ class RvSDataModule(pl.LightningDataModule):
         self.top_candidates_size = top_candidates_size
 
     def setup(self, stage=None):
-        self.train_dataset, self.val_dataset = split_dataset_based_on_top_candidates(
-            self.task, size=self.top_candidates_size, val_frac=self.val_frac, device=self.device, temp=self.temp)
+        if self.top_candidates_size is not None:
+            self.train_dataset, self.val_dataset = split_dataset_based_on_top_candidates(
+                self.task, size=self.top_candidates_size, val_frac=self.val_frac, device=self.device, temp=self.temp)
+        else:
+            self.train_dataset, self.val_dataset = split_dataset(
+                self.task, self.val_frac, self.device, self.temp)
 
     def train_dataloader(self):
         train_loader = DataLoader(self.train_dataset,
@@ -286,252 +271,19 @@ def log_args(
             json.dump(args, f)
 
 
-def run_training_forward(
-        taskname: str,
-        seed: int,
-        wandb_logger: pl.loggers.wandb.WandbLogger,
-        args,
-        device=None,
-):
-    epochs = args.epochs
-    max_steps = args.max_steps
-    train_time = args.train_time
-    hidden_size = args.hidden_size
-    depth = args.depth
-    learning_rate = args.learning_rate
-    auto_tune_lr = args.auto_tune_lr
-    dropout_p = args.dropout_p
-    checkpoint_every_n_epochs = args.checkpoint_every_n_epochs
-    checkpoint_every_n_steps = args.checkpoint_every_n_steps
-    checkpoint_time_interval = args.checkpoint_time_interval
-    batch_size = args.batch_size
-    val_frac = args.val_frac
-    use_gpu = args.use_gpu
-    device = device
-    num_workers = args.num_workers
-    vtype = args.vtype
-    T0 = args.T0
-    normalise_x = args.normalise_x
-    normalise_y = args.normalise_y
-    debias = args.debias
-    score_matching = args.score_matching
-
-    set_seed(seed)
-    if taskname != 'tf-bind-10':
-        task = design_bench.make(TASKNAME2TASK[taskname])
-    else:
-        task = design_bench.make(TASKNAME2TASK[taskname],
-                                 dataset_kwargs={"max_samples": 10000})
-
-    if task.is_discrete:
-        task.map_to_logits()
-    if normalise_x:
-        task.map_normalize_x()
-    if normalise_y:
-        task.map_normalize_y()
-
-    model = ForwardModel(taskname=taskname,
-                         task=task,
-                         learning_rate=learning_rate,
-                         hidden_size=hidden_size,
-                         vtype=vtype,
-                         beta_min=args.beta_min,
-                         beta_max=args.beta_max,
-                         simple_clip=args.simple_clip,
-                         T0=T0,
-                         debias=debias,
-                         dropout_p=dropout_p)
-
-    monitor = "val_loss" if val_frac > 0 else "train_loss"
-    checkpoint_dirpath = os.path.join(wandb_logger.experiment.dir,
-                                      checkpoint_dir)
-    checkpoint_filename = f"{taskname}_{seed}-" + "-{epoch:03d}-{" + f"{monitor}" + ":.4e}"
-    periodic_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=checkpoint_dirpath,
-        filename=checkpoint_filename,
-        save_last=False,
-        save_top_k=-1,
-        every_n_epochs=checkpoint_every_n_epochs,
-        every_n_train_steps=checkpoint_every_n_steps,
-        train_time_interval=pd.Timedelta(checkpoint_time_interval).
-        to_pytimedelta() if checkpoint_time_interval is not None else None,
-    )
-    val_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=checkpoint_dirpath,
-        monitor=monitor,
-        filename=checkpoint_filename,
-        save_last=True,  # save latest model
-        save_top_k=1,  # save top model based on monitored loss
-    )
-    trainer = pl.Trainer(
-        gpus=int(use_gpu),
-        auto_lr_find=auto_tune_lr,
-        max_epochs=epochs,
-        max_steps=max_steps,
-        max_time=train_time,
-        logger=wandb_logger,
-        progress_bar_refresh_rate=20,
-        callbacks=[periodic_checkpoint_callback, val_checkpoint_callback],
-        track_grad_norm=2,  # logs the 2-norm of gradients
-        limit_val_batches=1.0 if val_frac > 0 else 0,
-        limit_test_batches=0,
-    )
-
-    # train_dataset, val_dataset = split_dataset(task=task,
-    #                                            val_frac=val_frac,
-    #                                            device=device)
-    # train_data_module = DataLoader(train_dataset)  #, num_workers=num_workers)
-    # val_data_module = DataLoader(val_dataset)  #, num_workers=num_workers)
-
-    # trainer.fit(model, train_data_module, val_data_module)
-    data_module = RvSDataModule(task=task,
-                                val_frac=val_frac,
-                                device=device,
-                                batch_size=batch_size,
-                                num_workers=num_workers,
-                                temp=args.temp,
-                                top_candidates_size=args.top_candidates_size)
-    trainer.fit(model, data_module)
-
-
-def run_training(
-        taskname: str,
-        seed: int,
-        wandb_logger: pl.loggers.wandb.WandbLogger,
-        args,
-        device=None,
-):
-    epochs = args.epochs
-    max_steps = args.max_steps
-    train_time = args.train_time
-    hidden_size = args.hidden_size
-    depth = args.depth
-    learning_rate = args.learning_rate
-    auto_tune_lr = args.auto_tune_lr
-    dropout_p = args.dropout_p
-    checkpoint_every_n_epochs = args.checkpoint_every_n_epochs
-    checkpoint_every_n_steps = args.checkpoint_every_n_steps
-    checkpoint_time_interval = args.checkpoint_time_interval
-    batch_size = args.batch_size
-    val_frac = args.val_frac
-    use_gpu = args.use_gpu
-    device = device
-    num_workers = args.num_workers
-    vtype = args.vtype
-    T0 = args.T0
-    normalise_x = args.normalise_x
-    normalise_y = args.normalise_y
-    debias = args.debias
-    score_matching = args.score_matching
-
-    set_seed(seed)
-    if taskname != 'tf-bind-10':
-        task = design_bench.make(TASKNAME2TASK[taskname])
-    else:
-        task = design_bench.make(TASKNAME2TASK[taskname],
-                                 dataset_kwargs={"max_samples": 10000})
-
-    if task.is_discrete:
-        task.map_to_logits()
-        # print("X shape:", task.x.shape)
-    if normalise_x:
-        task.map_normalize_x()
-    if normalise_y:
-        task.map_normalize_y()
-
-    print("TASK NAME: ", taskname)
-
-    if not score_matching:
-        model = DiffusionTest(taskname=taskname,
-                              task=task,
-                              learning_rate=learning_rate,
-                              hidden_size=hidden_size,
-                              vtype=vtype,
-                              beta_min=args.beta_min,
-                              beta_max=args.beta_max,
-                              simple_clip=args.simple_clip,
-                              T0=T0,
-                              debias=debias,
-                              dropout_p=dropout_p)
-    else:
-        print("Score matching loss")
-        model = DiffusionScore(taskname=taskname,
-                               task=task,
-                               learning_rate=learning_rate,
-                               hidden_size=hidden_size,
-                               vtype=vtype,
-                               beta_min=args.beta_min,
-                               beta_max=args.beta_max,
-                               simple_clip=args.simple_clip,
-                               T0=T0,
-                               debias=debias,
-                               dropout_p=dropout_p)
-
-    # monitor = "val_loss" if val_frac > 0 else "train_loss"
-    monitor = "elbo_estimator" if val_frac > 0 else "train_loss"
-    checkpoint_dirpath = os.path.join(wandb_logger.experiment.dir,
-                                      checkpoint_dir)
-    checkpoint_filename = f"{taskname}_{seed}-" + "-{epoch:03d}-{" + f"{monitor}" + ":.4e}"
-    periodic_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=checkpoint_dirpath,
-        filename=checkpoint_filename,
-        save_last=False,
-        save_top_k=-1,
-        every_n_epochs=checkpoint_every_n_epochs,
-        every_n_train_steps=checkpoint_every_n_steps,
-        train_time_interval=pd.Timedelta(checkpoint_time_interval).
-        to_pytimedelta() if checkpoint_time_interval is not None else None,
-    )
-    val_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=checkpoint_dirpath,
-        monitor=monitor,
-        filename=checkpoint_filename,
-        save_last=True,  # save latest model
-        save_top_k=1,  # save top model based on monitored loss
-    )
-    trainer = pl.Trainer(
-        devices=1,
-        # auto_lr_find=auto_tune_lr,
-        max_epochs=epochs,
-        # max_steps=max_steps,
-        max_time=train_time,
-        logger=wandb_logger,
-        # progress_bar_refresh_rate=20,
-        callbacks=[periodic_checkpoint_callback, val_checkpoint_callback],
-        # track_grad_norm=2,  # logs the 2-norm of gradients
-        limit_val_batches=1.0 if val_frac > 0 else 0,
-        limit_test_batches=0,
-    )
-
-    # train_dataset, val_dataset = split_dataset(task=task,
-    #                                            val_frac=val_frac,
-    #                                            device=device)
-    # train_data_module = DataLoader(train_dataset)  #, num_workers=num_workers)
-    # val_data_module = DataLoader(val_dataset)  #, num_workers=num_workers)
-
-    # trainer.fit(model, train_data_module, val_data_module)
-    data_module = RvSDataModule(task=task,
-                                val_frac=val_frac,
-                                device=device,
-                                batch_size=batch_size,
-                                num_workers=num_workers,
-                                temp=args.temp,
-                                top_candidates_size=args.top_candidates_size)
-    trainer.fit(model, data_module)
-
-
 @torch.no_grad()
 def run_evaluate(
-        taskname,
-        seed,
-        hidden_size,
-        learning_rate,
-        checkpoint_path,
-        args,
-        wandb_logger=None,
-        device=None,
-        normalise_x=False,
-        normalise_y=False,
+    taskname,
+    seed,
+    hidden_size,
+    learning_rate,
+    source_checkpoint_path,
+    target_checkpoint_path,
+    args,
+    wandb_logger=None,
+    device=None,
+    normalise_x=False,
+    normalise_y=False,
 ):
     set_seed(seed)
     task = design_bench.make(TASKNAME2TASK[taskname])
@@ -557,7 +309,18 @@ def run_evaluate(
     else:
         print("Score matching loss")
         model = DiffusionScore.load_from_checkpoint(
-            checkpoint_path=checkpoint_path,
+            checkpoint_path=source_checkpoint_path,
+            taskname=taskname,
+            task=task,
+            learning_rate=args.learning_rate,
+            hidden_size=args.hidden_size,
+            vtype=args.vtype,
+            beta_min=args.beta_min,
+            beta_max=args.beta_max,
+            T0=args.T0,
+            dropout_p=args.dropout_p)
+        target_model = DiffusionScore.load_from_checkpoint(
+            checkpoint_path=target_checkpoint_path,
             taskname=taskname,
             task=task,
             learning_rate=args.learning_rate,
@@ -570,8 +333,10 @@ def run_evaluate(
 
     model = model.to(device)
     model.eval()
+    target_model = target_model.to(device)
+    target_model.eval()
 
-    def heun_sampler(sde, x_0, ya, num_steps, lmbd=0., keep_all_samples=True):
+    def heun_sampler(sde, x_0, ya, num_steps, start_step=0, end_step=None, lmbd=0., keep_all_samples=True):
         device = sde.gen_sde.T.device
         batch_size = x_0.size(0)
         ndim = x_0.dim() - 1
@@ -584,14 +349,18 @@ def run_evaluate(
         x_t = x_0.detach().clone().to(device)
         t = torch.zeros(batch_size, *([1] * ndim), device=device)
         t_n = torch.zeros(batch_size, *([1] * ndim), device=device)
+
+        if end_step is None:
+            end_step = num_steps
+
         with torch.no_grad():
-            for i in range(num_steps):
+            for i in range(start_step, end_step):
                 t.fill_(ts[i].item())
                 if i < num_steps - 1:
                     t_n.fill_(ts[i + 1].item())
                 mu = sde.gen_sde.mu(t, x_t, ya, lmbd=lmbd, gamma=args.gamma)
                 sigma = sde.gen_sde.sigma(t, x_t, lmbd=lmbd)
-                x_t = x_t + delta * mu + delta ** 0.5 * sigma * torch.randn_like(
+                x_t = x_t + delta * mu + delta**0.5 * sigma * torch.randn_like(
                     x_t
                 )  # one step update of Euler Maruyama method with a step size delta
                 # Additional terms for Heun's method
@@ -603,7 +372,7 @@ def run_evaluate(
                                          gamma=args.gamma)
                     sigma2 = sde.gen_sde.sigma(t_n, x_t, lmbd=lmbd)
                     x_t = x_t + (sigma2 -
-                                 sigma) / 2 * delta ** 0.5 * torch.randn_like(x_t)
+                                 sigma) / 2 * delta**0.5 * torch.randn_like(x_t)
 
                 if keep_all_samples or i == num_steps - 1:
                     xs.append(x_t.cpu())
@@ -611,40 +380,6 @@ def run_evaluate(
                     pass
         return xs
 
-    def euler_maruyama_sampler(sde,
-                               x_0,
-                               ya,
-                               num_steps,
-                               lmbd=0.,
-                               keep_all_samples=True):
-        """
-        Euler Maruyama method with a step size delta
-        """
-        # init
-        device = sde.gen_sde.T.device
-        batch_size = x_0.size(0)
-        ndim = x_0.dim() - 1
-        T_ = sde.gen_sde.T.cpu().item()
-        delta = T_ / num_steps
-        ts = torch.linspace(0, 1, num_steps + 1) * T_
-
-        # sample
-        xs = []
-        x_t = x_0.detach().clone().to(device)
-        t = torch.zeros(batch_size, *([1] * ndim), device=device)
-        with torch.no_grad():
-            for i in range(num_steps):
-                t.fill_(ts[i].item())
-                mu = sde.gen_sde.mu(t, x_t, ya, lmbd=lmbd, gamma=args.gamma)
-                sigma = sde.gen_sde.sigma(t, x_t, lmbd=lmbd)
-                x_t = x_t + delta * mu + delta ** 0.5 * sigma * torch.randn_like(
-                    x_t
-                )  # one step update of Euler Maruyama method with a step size delta
-                if keep_all_samples or i == num_steps - 1:
-                    xs.append(x_t.cpu())
-                else:
-                    pass
-        return xs
 
     num_steps = args.num_steps
     num_samples = 512
@@ -654,7 +389,7 @@ def run_evaluate(
     lmbds = [args.lamda]
 
     # use the max of the dataset instead
-    args.condition = task.y.max()
+    args.condition = task.y.max() * 3
 
     @torch.no_grad()
     def _get_trained_model():
@@ -678,20 +413,40 @@ def run_evaluate(
                               task.x.shape[-1] * task.x.shape[-2],
                               device=device)  # init from prior
 
+         # Generate a sample from the source distribution
         y_ = torch.ones(num_samples).to(device) * args.condition
-        # xs = euler_maruyama_sampler(model,
-        xs = heun_sampler(model,
+        xs_base = heun_sampler(model,
                           x_0,
                           y_,
                           num_steps,
+                          start_step=0,
+                          end_step=1000,
                           lmbd=lmbd,
-                          keep_all_samples=False)  # sample
-        # keep_all_samples=True)  # sample
+                          keep_all_samples=True)
+
+        # Editing towards the target distribution
+        xs_base = xs_base[-1]
+        # This is a hyperparameter to trade off between the source distribution and the target distribution
+        # See SDEdit paper for more details
+        t_ = torch.tensor([0.4]).expand(num_samples).view(-1, 1)
+        x_hat, target, std, g = target_model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
+        # xs = [x_hat]
+        # Denoise again
+        y_ = y_ * 3
+        xs = heun_sampler(model,
+                          x_hat,
+                          y_,
+                          num_steps,
+                          start_step=600,
+                          end_step=1000,
+                          lmbd=lmbd,
+                          keep_all_samples=True)
+        xs = [xs_base]
 
         ctr = 0
         # pred_model = _get_trained_model()
         # preds = []
-        for qqq in xs:
+        for qqq in xs[-1]:
             ctr += 1
             print(qqq.shape)
             if not qqq.isnan().any():
@@ -927,6 +682,12 @@ if __name__ == "__main__":
         required=False,
         default=None,
     )
+    parser.add_argument(
+        "--target_checkpoint_path",
+        type=str,
+        required=False,
+        help="Path to the target model checkpoint",
+    )
     args = parser.parse_args()
 
     wandb_project = "score-matching " if args.score_matching else "sde-flow"
@@ -937,35 +698,24 @@ if __name__ == "__main__":
 
     expt_save_path = f"./experiments/{args.task}/{args.name}/{args.seed}"
 
-    if args.mode == 'train':
-        if not os.path.exists(expt_save_path):
-            os.makedirs(expt_save_path)
-        wandb_logger = pl.loggers.wandb.WandbLogger(
-            project=wandb_project,
-            name=f"{args.name}_task={args.task}_{args.seed}",
-            save_dir=expt_save_path)
-        log_args(args, wandb_logger)
-        run_training(
-            # run_training_forward(
-            taskname=args.task,
-            seed=args.seed,
-            wandb_logger=wandb_logger,
-            args=args,
-            device=device,
-        )
-    elif args.mode == 'eval':
+    if args.mode == 'eval':
         if args.task == "superconductor":
             checkpoint_path = os.path.join(
-                "experiments/superconductor/score_diffusion/123/wandb/offline-run-20240327_170528-9w8930ok/files/checkpoints/last.ckpt")
+                "experiments/superconductor/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/superconductor/score_diffusion/123/wandb/target/files/checkpoints/last.ckpt")
         elif args.task == "tf-bind-8":
             checkpoint_path = os.path.join(
-                "experiments/tf-bind-8/score_diffusion/0/wandb/offline-run-20240327_171318-ryjzeto8/files/checkpoints/last.ckpt")
+                "experiments/tf-bind-8/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+            args.target_checkpoint_path = os.path.join(
+                "experiments/tf-bind-8/score_diffusion/123/wandb/target/files/checkpoints/last.ckpt")
         run_evaluate(taskname=args.task,
                      seed=args.seed,
                      hidden_size=args.hidden_size,
                      args=args,
                      learning_rate=args.learning_rate,
-                     checkpoint_path=checkpoint_path,
+                     source_checkpoint_path=checkpoint_path,
+                     target_checkpoint_path=args.target_checkpoint_path,
                      device=device,
                      normalise_x=args.normalise_x,
                      normalise_y=args.normalise_y)
