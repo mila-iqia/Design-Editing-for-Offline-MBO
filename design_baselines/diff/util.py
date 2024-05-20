@@ -23,6 +23,15 @@ TASKNAME2TASK = {
     'nas': 'CIFARNAS-Exact-v0',
     'chembl': 'ChEMBL_MCHC_CHEMBL3885882_MorganFingerprint-RandomForest-v0',
     'gfp': 'GFP-Transformer-v0',
+    'rosenbrock': 'Rosenbrock-Exact-v0',
+    'ackley': 'Ackley-Exact-v0',
+    'cosines': 'Cosines-Exact-v0',
+    'griewank': 'Griewank-Exact-v0',
+    'levy': 'Levy-Exact-v0',
+    'rastrigin' : 'Rastrigin-Exact-v0',
+    'sphere' : 'Sphere-Exact-v0',
+    'zakharov': 'Zakharov-Exact-v0',
+    'rnabind': 'RNABind-Exact-v0',
 }
 
 

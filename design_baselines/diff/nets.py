@@ -42,7 +42,6 @@ from torch.optim import Optimizer
 from util import TASKNAME2TASK
 
 from lib.sdes import VariancePreservingSDE, PluginReverseSDE, ScorePluginReverseSDE
-from unet import UNET_1D
 
 
 def get_cosine_schedule_with_warmup(optimizer: Optimizer,
@@ -286,9 +285,10 @@ class DiffusionScore(pl.LightningModule):
         self.task = task
         self.learning_rate = learning_rate
         self.dim_y = self.task.y.shape[-1]
-        if taskname in ['dkitty', 'ant', 'superconductor', 'hopper']:
+        if taskname in ['dkitty', 'ant', 'superconductor', 'hopper',
+                        'rosenbrock', 'ackley', 'cosines', 'griewank', 'levy', 'rastrigin', 'sphere', 'zakharov',]:
             self.dim_x = self.task.x.shape[-1]
-        elif taskname in ['tf-bind-8', 'tf-bind-10', 'nas']:
+        elif taskname in ['tf-bind-8', 'tf-bind-10', 'nas', 'rnabind']:
             self.dim_x = self.task.x.shape[-1] * self.task.x.shape[-2]
         self.dropout_p = dropout_p
         self.beta_min = beta_min

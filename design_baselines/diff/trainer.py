@@ -1,16 +1,10 @@
 import json
 import os
-import random
-import string
-import uuid
-import shutil
 
-from typing import Optional, Union
 from pprint import pprint
 
 import configargparse
 
-import sys
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
 
@@ -27,29 +21,24 @@ def suppress_output():
 
 with suppress_output():
     import design_bench
+    from register_dataset.register_levy import LevyDataset, LevyOracle
+    design_bench.register('Levy-Exact-v0', LevyDataset, LevyOracle,
+                          # keyword arguments for building the dataset
+                          dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
+                          # keyword arguments for building the exact oracle
+                          oracle_kwargs=dict(noise_std=0.0)
+                          )
 
-    from design_bench.datasets.discrete.tf_bind_8_dataset import TFBind8Dataset
-    from design_bench.datasets.discrete.tf_bind_10_dataset import TFBind10Dataset
-    from design_bench.datasets.discrete.nas_bench_dataset import NASBenchDataset
-    from design_bench.datasets.discrete.chembl_dataset import ChEMBLDataset
-
-    from design_bench.datasets.continuous.ant_morphology_dataset import AntMorphologyDataset
-    from design_bench.datasets.continuous.dkitty_morphology_dataset import DKittyMorphologyDataset
-    from design_bench.datasets.continuous.superconductor_dataset import SuperconductorDataset
-    # from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 import pytorch_lightning as pl
-import pickle as pkl
 
 import torch
 from torch.utils.data import Dataset, DataLoader
 
 from nets import DiffusionTest, DiffusionScore
 from util import TASKNAME2TASK, configure_gpu, set_seed, get_weights
-from forward import ForwardModel
 
 args_filename = "args.json"
 checkpoint_dir = "checkpoints"
@@ -158,15 +147,15 @@ def split_dataset(task, val_frac=None, device=None, temp=None):
     return train_dataset, val_dataset
 
 
-def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None, temp=None):
+def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None, temp=None, is_target=False):
     length = task.y.shape[0]
     shuffle_idx = np.arange(length)
-    shuffle_idx = np.random.shuffle(shuffle_idx)
+    np.random.shuffle(shuffle_idx)
 
     if task.is_discrete:
         task.map_to_logits()
         x = task.x[shuffle_idx]
-        x = x.reshape(x.shape[1:])
+        # x = x.reshape(x.shape[1:])
         x = x.reshape(x.shape[0], -1)
     else:
         x = task.x[shuffle_idx]
@@ -190,21 +179,27 @@ def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None
     x = x[top_indices]
     y = y[top_indices]
     w = w[top_indices]
+    size = x.shape[0]
+    shuffle_idx = np.arange(size)
+    np.random.shuffle(shuffle_idx)
+    x = x[shuffle_idx]
+    y = y[shuffle_idx]
+    w = w[shuffle_idx]
 
-    target_xy = np.load("experiments/superconductor/Superconductor-RandomForest-v0_pseudo_target_123.npy", allow_pickle=True).item()
-    target_x = np.array(target_xy["x"])
-    target_y = np.array(target_xy["y"])[:, np.newaxis]
-    target_w = get_weights(target_y, temp=temp)
+    if is_target:
+        target_xy = np.load(f"experiments/{args.task}/{TASKNAME2TASK[args.task]}_pseudo_target_123.npy",
+                            allow_pickle=True).item()
+        x = np.array(target_xy["x"])
+        y = np.array(target_xy["pred_y"])[:, np.newaxis]
+        w = get_weights(y, temp=temp)
+        size = x.shape[0] // 3
+        shuffle_idx = np.arange(size)
+        np.random.shuffle(shuffle_idx)
+        x = x[shuffle_idx]
+        y = y[shuffle_idx]
+        w = w[shuffle_idx]
 
-    print((x[:] == target_x[:]).sum())
-    print((x[:] != target_x[:]).sum())
-    print((y[:] == target_y[:]).sum())
-    print((y[:] != target_y[:]).sum())
-    print((w[:] == target_w[:]).sum())
-    print((w[:] != target_w[:]).sum())
-    exit()
-
-    print(w.shape)
+    print(x.shape)
 
     if val_frac is None:
         val_frac = 0
@@ -234,7 +229,7 @@ def split_dataset_based_on_top_candidates(task, size, val_frac=None, device=None
 
 class RvSDataModule(pl.LightningDataModule):
 
-    def __init__(self, task, batch_size, num_workers, val_frac, device, temp, top_candidates_size=None):
+    def __init__(self, task, batch_size, num_workers, val_frac, device, temp, top_candidates_size=None, is_target=False):
         super().__init__()
 
         self.task = task
@@ -246,10 +241,11 @@ class RvSDataModule(pl.LightningDataModule):
         self.val_dataset = None
         self.temp = temp
         self.top_candidates_size = top_candidates_size
+        self.is_target = is_target
 
     def setup(self, stage=None):
         self.train_dataset, self.val_dataset = split_dataset_based_on_top_candidates(
-            self.task, size=self.top_candidates_size, val_frac=self.val_frac, device=self.device, temp=self.temp)
+            self.task, size=self.top_candidates_size, val_frac=self.val_frac, device=self.device, temp=self.temp, is_target=self.is_target)
 
     def train_dataloader(self):
         train_loader = DataLoader(self.train_dataset,
@@ -284,114 +280,6 @@ def log_args(
             json.dump(args.__dict__, f)
         except AttributeError:
             json.dump(args, f)
-
-
-def run_training_forward(
-        taskname: str,
-        seed: int,
-        wandb_logger: pl.loggers.wandb.WandbLogger,
-        args,
-        device=None,
-):
-    epochs = args.epochs
-    max_steps = args.max_steps
-    train_time = args.train_time
-    hidden_size = args.hidden_size
-    depth = args.depth
-    learning_rate = args.learning_rate
-    auto_tune_lr = args.auto_tune_lr
-    dropout_p = args.dropout_p
-    checkpoint_every_n_epochs = args.checkpoint_every_n_epochs
-    checkpoint_every_n_steps = args.checkpoint_every_n_steps
-    checkpoint_time_interval = args.checkpoint_time_interval
-    batch_size = args.batch_size
-    val_frac = args.val_frac
-    use_gpu = args.use_gpu
-    device = device
-    num_workers = args.num_workers
-    vtype = args.vtype
-    T0 = args.T0
-    normalise_x = args.normalise_x
-    normalise_y = args.normalise_y
-    debias = args.debias
-    score_matching = args.score_matching
-
-    set_seed(seed)
-    if taskname != 'tf-bind-10':
-        task = design_bench.make(TASKNAME2TASK[taskname])
-    else:
-        task = design_bench.make(TASKNAME2TASK[taskname],
-                                 dataset_kwargs={"max_samples": 10000})
-
-    if task.is_discrete:
-        task.map_to_logits()
-    if normalise_x:
-        task.map_normalize_x()
-    if normalise_y:
-        task.map_normalize_y()
-
-    model = ForwardModel(taskname=taskname,
-                         task=task,
-                         learning_rate=learning_rate,
-                         hidden_size=hidden_size,
-                         vtype=vtype,
-                         beta_min=args.beta_min,
-                         beta_max=args.beta_max,
-                         simple_clip=args.simple_clip,
-                         T0=T0,
-                         debias=debias,
-                         dropout_p=dropout_p)
-
-    monitor = "val_loss" if val_frac > 0 else "train_loss"
-    checkpoint_dirpath = os.path.join(wandb_logger.experiment.dir,
-                                      checkpoint_dir)
-    checkpoint_filename = f"{taskname}_{seed}-" + "-{epoch:03d}-{" + f"{monitor}" + ":.4e}"
-    periodic_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=checkpoint_dirpath,
-        filename=checkpoint_filename,
-        save_last=False,
-        save_top_k=-1,
-        every_n_epochs=checkpoint_every_n_epochs,
-        every_n_train_steps=checkpoint_every_n_steps,
-        train_time_interval=pd.Timedelta(checkpoint_time_interval).
-        to_pytimedelta() if checkpoint_time_interval is not None else None,
-    )
-    val_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=checkpoint_dirpath,
-        monitor=monitor,
-        filename=checkpoint_filename,
-        save_last=True,  # save latest model
-        save_top_k=1,  # save top model based on monitored loss
-    )
-    trainer = pl.Trainer(
-        gpus=int(use_gpu),
-        auto_lr_find=auto_tune_lr,
-        max_epochs=epochs,
-        max_steps=max_steps,
-        max_time=train_time,
-        logger=wandb_logger,
-        progress_bar_refresh_rate=20,
-        callbacks=[periodic_checkpoint_callback, val_checkpoint_callback],
-        track_grad_norm=2,  # logs the 2-norm of gradients
-        limit_val_batches=1.0 if val_frac > 0 else 0,
-        limit_test_batches=0,
-    )
-
-    # train_dataset, val_dataset = split_dataset(task=task,
-    #                                            val_frac=val_frac,
-    #                                            device=device)
-    # train_data_module = DataLoader(train_dataset)  #, num_workers=num_workers)
-    # val_data_module = DataLoader(val_dataset)  #, num_workers=num_workers)
-
-    # trainer.fit(model, train_data_module, val_data_module)
-    data_module = RvSDataModule(task=task,
-                                val_frac=val_frac,
-                                device=device,
-                                batch_size=batch_size,
-                                num_workers=num_workers,
-                                temp=args.temp,
-                                top_candidates_size=args.top_candidates_size)
-    trainer.fit(model, data_module)
 
 
 def run_training(
@@ -429,7 +317,7 @@ def run_training(
         task = design_bench.make(TASKNAME2TASK[taskname])
     else:
         task = design_bench.make(TASKNAME2TASK[taskname],
-                                 dataset_kwargs={"max_samples": 10000})
+                                 dataset_kwargs={"max_samples": 30000})
 
     if task.is_discrete:
         task.map_to_logits()
@@ -516,215 +404,9 @@ def run_training(
                                 batch_size=batch_size,
                                 num_workers=num_workers,
                                 temp=args.temp,
-                                top_candidates_size=args.top_candidates_size)
+                                top_candidates_size=args.top_candidates_size,
+                                is_target=args.is_target)
     trainer.fit(model, data_module)
-
-
-@torch.no_grad()
-def run_evaluate(
-        taskname,
-        seed,
-        hidden_size,
-        learning_rate,
-        checkpoint_path,
-        args,
-        wandb_logger=None,
-        device=None,
-        normalise_x=False,
-        normalise_y=False,
-):
-    set_seed(seed)
-    task = design_bench.make(TASKNAME2TASK[taskname])
-    if task.is_discrete:
-        task.map_to_logits()
-    if normalise_x:
-        task.map_normalize_x()
-    if normalise_y:
-        task.map_normalize_y()
-
-    if not args.score_matching:
-        model = DiffusionTest.load_from_checkpoint(
-            checkpoint_path=checkpoint_path,
-            taskname=taskname,
-            task=task,
-            learning_rate=args.learning_rate,
-            hidden_size=args.hidden_size,
-            vtype=args.vtype,
-            beta_min=args.beta_min,
-            beta_max=args.beta_max,
-            T0=args.T0,
-            dropout_p=args.dropout_p)
-    else:
-        print("Score matching loss")
-        model = DiffusionScore.load_from_checkpoint(
-            checkpoint_path=checkpoint_path,
-            taskname=taskname,
-            task=task,
-            learning_rate=args.learning_rate,
-            hidden_size=args.hidden_size,
-            vtype=args.vtype,
-            beta_min=args.beta_min,
-            beta_max=args.beta_max,
-            T0=args.T0,
-            dropout_p=args.dropout_p)
-
-    model = model.to(device)
-    model.eval()
-
-    def heun_sampler(sde, x_0, ya, num_steps, lmbd=0., keep_all_samples=True):
-        device = sde.gen_sde.T.device
-        batch_size = x_0.size(0)
-        ndim = x_0.dim() - 1
-        T_ = sde.gen_sde.T.cpu().item()
-        delta = T_ / num_steps
-        ts = torch.linspace(0, 1, num_steps + 1) * T_
-
-        # sample
-        xs = []
-        x_t = x_0.detach().clone().to(device)
-        t = torch.zeros(batch_size, *([1] * ndim), device=device)
-        t_n = torch.zeros(batch_size, *([1] * ndim), device=device)
-        with torch.no_grad():
-            for i in range(num_steps):
-                t.fill_(ts[i].item())
-                if i < num_steps - 1:
-                    t_n.fill_(ts[i + 1].item())
-                mu = sde.gen_sde.mu(t, x_t, ya, lmbd=lmbd, gamma=args.gamma)
-                sigma = sde.gen_sde.sigma(t, x_t, lmbd=lmbd)
-                x_t = x_t + delta * mu + delta ** 0.5 * sigma * torch.randn_like(
-                    x_t
-                )  # one step update of Euler Maruyama method with a step size delta
-                # Additional terms for Heun's method
-                if i < num_steps - 1:
-                    mu2 = sde.gen_sde.mu(t_n,
-                                         x_t,
-                                         ya,
-                                         lmbd=lmbd,
-                                         gamma=args.gamma)
-                    sigma2 = sde.gen_sde.sigma(t_n, x_t, lmbd=lmbd)
-                    x_t = x_t + (sigma2 -
-                                 sigma) / 2 * delta ** 0.5 * torch.randn_like(x_t)
-
-                if keep_all_samples or i == num_steps - 1:
-                    xs.append(x_t.cpu())
-                else:
-                    pass
-        return xs
-
-    def euler_maruyama_sampler(sde,
-                               x_0,
-                               ya,
-                               num_steps,
-                               lmbd=0.,
-                               keep_all_samples=True):
-        """
-        Euler Maruyama method with a step size delta
-        """
-        # init
-        device = sde.gen_sde.T.device
-        batch_size = x_0.size(0)
-        ndim = x_0.dim() - 1
-        T_ = sde.gen_sde.T.cpu().item()
-        delta = T_ / num_steps
-        ts = torch.linspace(0, 1, num_steps + 1) * T_
-
-        # sample
-        xs = []
-        x_t = x_0.detach().clone().to(device)
-        t = torch.zeros(batch_size, *([1] * ndim), device=device)
-        with torch.no_grad():
-            for i in range(num_steps):
-                t.fill_(ts[i].item())
-                mu = sde.gen_sde.mu(t, x_t, ya, lmbd=lmbd, gamma=args.gamma)
-                sigma = sde.gen_sde.sigma(t, x_t, lmbd=lmbd)
-                x_t = x_t + delta * mu + delta ** 0.5 * sigma * torch.randn_like(
-                    x_t
-                )  # one step update of Euler Maruyama method with a step size delta
-                if keep_all_samples or i == num_steps - 1:
-                    xs.append(x_t.cpu())
-                else:
-                    pass
-        return xs
-
-    num_steps = args.num_steps
-    num_samples = 512
-    # num_samples = 10
-
-    # lmbds = [0., 1.]
-    lmbds = [args.lamda]
-
-    # use the max of the dataset instead
-    args.condition = task.y.max()
-
-    @torch.no_grad()
-    def _get_trained_model():
-        checkpoint_path = f"experiments/{taskname}/forward_model/123/wandb/latest-run/files/checkpoints/last.ckpt"
-        model = ForwardModel.load_from_checkpoint(
-            checkpoint_path=checkpoint_path,
-            taskname=taskname,
-            task=task, )
-
-        return model
-
-    # sample and plot
-    designs = []
-    results = []
-    for lmbd in lmbds:
-        if not task.is_discrete:
-            x_0 = torch.randn(num_samples, task.x.shape[-1],
-                              device=device)  # init from prior
-        else:
-            x_0 = torch.randn(num_samples,
-                              task.x.shape[-1] * task.x.shape[-2],
-                              device=device)  # init from prior
-
-        y_ = torch.ones(num_samples).to(device) * args.condition
-        # xs = euler_maruyama_sampler(model,
-        xs = heun_sampler(model,
-                          x_0,
-                          y_,
-                          num_steps,
-                          lmbd=lmbd,
-                          keep_all_samples=False)  # sample
-        # keep_all_samples=True)  # sample
-
-        ctr = 0
-        # pred_model = _get_trained_model()
-        # preds = []
-        for qqq in xs:
-            ctr += 1
-            print(qqq.shape)
-            if not qqq.isnan().any():
-                designs.append(qqq.cpu().numpy())
-
-                if not task.is_discrete:
-                    ys = task.predict(qqq.cpu().numpy())
-                else:
-                    qqq = qqq.view(qqq.size(0), -1, task.x.shape[-1])
-                    ys = task.predict(qqq.cpu().numpy())
-
-                # pred_ys = pred_model.mlp(qqq)
-                # preds.append(pred_ys.cpu().numpy())
-
-                print("GT ys: {}".format(ys.max()))
-                # print("Pred ys: {}".format(pred_ys.max()))
-                if normalise_y:
-                    print("normalise")
-                    ys = task.denormalize_y(ys)
-                else:
-                    print("none")
-                dic2y = np.load("npy/dic2y.npy", allow_pickle=True).item()
-                y_min, y_max = dic2y[TASKNAME2TASK[taskname]]
-                max_v = (np.max(ys) - y_min) / (y_max - y_min)
-                med_v = (np.median(ys) - y_min) / (y_max - y_min)
-                print("Max Score: ", max_v)
-                print("Median Score: ", med_v)
-                results.append(ys)
-            else:
-                print("fuck")
-
-    designs = np.concatenate(designs, axis=0)
-    results = np.concatenate(results, axis=0)
 
 
 if __name__ == "__main__":
@@ -927,6 +609,12 @@ if __name__ == "__main__":
         required=False,
         default=None,
     )
+    parser.add_argument(
+        "--is_target",
+        type=eval,
+        choices=[True, False],
+        default=False,
+    )
     args = parser.parse_args()
 
     wandb_project = "score-matching " if args.score_matching else "sde-flow"
@@ -946,28 +634,11 @@ if __name__ == "__main__":
             save_dir=expt_save_path)
         log_args(args, wandb_logger)
         run_training(
-            # run_training_forward(
             taskname=args.task,
             seed=args.seed,
             wandb_logger=wandb_logger,
             args=args,
             device=device,
         )
-    elif args.mode == 'eval':
-        if args.task == "superconductor":
-            checkpoint_path = os.path.join(
-                "experiments/superconductor/score_diffusion/123/wandb/offline-run-20240327_170528-9w8930ok/files/checkpoints/last.ckpt")
-        elif args.task == "tf-bind-8":
-            checkpoint_path = os.path.join(
-                "experiments/tf-bind-8/score_diffusion/0/wandb/offline-run-20240327_171318-ryjzeto8/files/checkpoints/last.ckpt")
-        run_evaluate(taskname=args.task,
-                     seed=args.seed,
-                     hidden_size=args.hidden_size,
-                     args=args,
-                     learning_rate=args.learning_rate,
-                     checkpoint_path=checkpoint_path,
-                     device=device,
-                     normalise_x=args.normalise_x,
-                     normalise_y=args.normalise_y)
     else:
         raise NotImplementedError
