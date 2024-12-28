@@ -1,4 +1,5 @@
 
+
 # Design Editing for Offline Model-based Optimization 
   
 ## Install dependencies  
@@ -15,12 +16,12 @@ conda activate DEMO
 ## Directory structure  
 ```  
 configs/  
-├── score_diffusion.cfg  # Use score matching. Other configs are not used.  
+├── score_diffusion.cfg  # Use score matching. Other configs are not used.
 design_baselines/  
 ├── diff/  
-│   ├── lib/  # Contains the implementation diffusion models  
-│   ├── edit.py  # Contains the implementation of the design editing algorithm, need to trian diffusion model on both source and target distribution first  
-│   ├── trainer.py  # Contains the implmentation of training a diffusion model and evaluate the vanilla DDOM models. Includes training for the pseudo-target distribution with top k candidates in the offline dataset  
+│   ├── lib/  # Contains the implementation diffusion models.
+│   ├── edit_new.py  # Contains the implementation of the design editing algorithm, need to train diffusion model first.
+│   ├── trainer.py  # Contains the implmentation of training a diffusion model
 │   ├── nets.py  # Contains the implementation of the neural networks used in the diffusion models  
 │   ├── util.py  # Contains the utility functions for the diffusion models  
 │   ├── grad.py  # Contains the implementation of the gradient ascent process to generate pseudo-target distribution (train proxies and generate designs)  
@@ -43,40 +44,6 @@ setup.py  # Contains the dependencies
 - `tf-bind-8`: TFBind8-Exact-v0  
 - `tf-bind-10`: TFBind10-Exact-v0  
 - `nas`: CIFARNAS-Exact-v0  
-  
-**Run training experiment on source distribution**  
-```bash
-python design_baselines/diff/trainer.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'train' \
-	--task {task name} \
-	--is_target False
-```
-For example, to run the experiment for `superconductor` with `score-matching` using random seed 123:  
-```bash  
-python design_baselines/diff/trainer.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'train' \
-	--task superconductor \
-	--is_target False
-```
-or directly:
-```bash  
-bash run_train_source.sh
-```
-
-**Run training experiment on pseudo-target distribution from the optimized offline dataset** 
-```bash  
-python design_baselines/diff/trainer.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'train' \
-	--task {task name} \
-	--is_target True
-```
-For example, to run the experiment for `superconductor` with `score-matching` using random seed 123:  
-```bash  
-python design_baselines/diff/trainer.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'train' \
-	--task superconductor \
-	--is_target True
-```
-or directly:
-```bash
-bash run_train_target.sh
-```
  
  **Run training experiment for proxy models**
 ```bash  
@@ -111,39 +78,51 @@ or directly:
 ```bash
 bash run_grad_gen.sh
 ```
-  
-## Evaluation  
-**Run evaluation experiment for baseline DDOM model**  
+
+**Run training experiment on source distribution**  
+```bash
+python design_baselines/diff/trainer.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'train' \
+	--task {task name} \
+	--is_target False
+```
+For example, to run the experiment for `superconductor` with `score-matching` using random seed 123:  
 ```bash  
-python design_baselines/diff/edit.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'eval' \
+python design_baselines/diff/trainer.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'train' \
+	--task superconductor \
+	--is_target False
+```
+or directly:
+```bash  
+bash run_train_source.sh
+```
+  
+## Design Edit  
+**Run evaluation on the gradient ascent samples**  
+```bash  
+python design_baselines/diff/edit_new.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'eval' \
   --task {task name} \  
   --save_prefix {prefix of saved json file} \  
   --edit False
 ```  
 For example, to run the experiment for `superconductor` with `score-matching` using random seed 123 and save as `src_123.json`:  
 ```bash  
-python design_baselines/diff/edit.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'eval' \  
+python design_baselines/diff/edit_new.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'eval' \  
   --task superconductor \  
   --save_prefix src \  
   --edit False
 ```
-It displays the maximum and median score of the `256` generated designs, like:  
-```  
-Max Score:  0.9839299  
-Median Score:  0.41181505  
-```  
   
-**Run evaluation experiment for the edited designs after the editing process**  
-Note that the source and target DDOM models need to be trained first, and the corresponding checkpoint paths of the DDOM models need to be specified in `edit.py`.
+**Run evaluate on the edited samples**  
+Note that the diffusion models need to be trained first, and the corresponding checkpoint paths of the diffusion models need to be specified in `edit_new.py`.
 ```bash  
-python design_baselines/diff/edit.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'eval' \
+python design_baselines/diff/edit_new.py --config {a config file from configs/} --seed {seed} --use_gpu --mode 'eval' \
   --task {task name} \  
   --save_prefix {prefix of saved json file} \  
   --edit True
 ```  
 For example, to run the experiment for `superconductor` with `score-matching` using random seed 123 and save as `edit_123.json`:  
 ```bash  
-python design_baselines/diff/edit.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'eval' \  
+python design_baselines/diff/edit_new.py --config configs/score_diffusion.cfg --seed 123 --use_gpu --mode 'eval' \  
   --task superconductor \  
   --save_prefix edit \  
   --edit True
@@ -153,7 +132,7 @@ or directly:
 bash run_edit.sh
 ```
   
-**Run evaluation for different seeds**
+**Run evaluation on different seeds**
 ```bash  
 bash run_edit_seed.sh
 ```

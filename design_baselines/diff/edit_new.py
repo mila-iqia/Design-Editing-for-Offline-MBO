@@ -1,11 +1,17 @@
 import copy
 import json
 import os
+import random
+import string
+import uuid
+import shutil
 
+from typing import Optional, Union
 from pprint import pprint
 
 import configargparse
 
+import sys
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
 
@@ -23,68 +29,28 @@ def suppress_output():
 with suppress_output():
     import design_bench
 
+    from design_bench.datasets.discrete.tf_bind_8_dataset import TFBind8Dataset
+    from design_bench.datasets.discrete.tf_bind_10_dataset import TFBind10Dataset
+    from design_bench.datasets.discrete.nas_bench_dataset import NASBenchDataset
+    from design_bench.datasets.discrete.chembl_dataset import ChEMBLDataset
+
+    from design_bench.datasets.continuous.ant_morphology_dataset import AntMorphologyDataset
+    from design_bench.datasets.continuous.dkitty_morphology_dataset import DKittyMorphologyDataset
+    from design_bench.datasets.continuous.superconductor_dataset import SuperconductorDataset
     # from design_bench.datasets.continuous.hopper_controller_dataset import HopperControllerDataset
-    # from register_dataset.register_rosenbrock import RosenbrockDataset, RosenbrockOracle
-    # design_bench.register('Rosenbrock-Exact-v0', RosenbrockDataset, RosenbrockOracle,
-    #                       # keyword arguments for building the dataset
-    #                       dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
-    #                       # keyword arguments for building the exact oracle
-    #                       oracle_kwargs=dict(noise_std=0.0)
-    #                       )
-    # from register_dataset.register_rastrigin import RastriginDataset, RastriginOracle
-    # design_bench.register('Rastrigin-Exact-v0', RastriginDataset, RastriginOracle,
-    #                       # keyword arguments for building the dataset
-    #                       dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
-    #                       # keyword arguments for building the exact oracle
-    #                       oracle_kwargs=dict(noise_std=0.0)
-    #                       )
-    from register_dataset.register_levy import LevyDataset, LevyOracle
-    design_bench.register('Levy-Exact-v0', LevyDataset, LevyOracle,
-                          # keyword arguments for building the dataset
-                          dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
-                          # keyword arguments for building the exact oracle
-                          oracle_kwargs=dict(noise_std=0.0)
-                          )
-    # from register_dataset.register_rnabind_random import RNABindDataset
-    # from design_bench.oracles.sklearn import RandomForestOracle
-    # design_bench.register('RNABind-RandomForest-v0', RNABindDataset, RandomForestOracle,
-    #                       # keyword arguments for building the dataset
-    #                       dataset_kwargs=dict(
-    #                           max_samples=None,
-    #                           distribution=None,
-    #                           max_percentile=50,
-    #                           min_percentile=0,
-    #                       ),
-    #
-    #                       # keyword arguments for building RandomForest oracle
-    #                       oracle_kwargs=dict(
-    #                           noise_std=0.0,
-    #                           max_samples=2000,
-    #                           distribution=None,
-    #                           max_percentile=100,
-    #                           min_percentile=0,
-    #
-    #                           # parameters used for building the model
-    #                           model_kwargs=dict(n_estimators=100,
-    #                                             max_depth=100,
-    #                                             max_features="auto"),
-    #                       ))
-    # from register_dataset.register_rnabind_exact import RNABindDataset, RNABindOracle
-    # design_bench.register('RNABind-Exact-v0', RNABindDataset, RNABindOracle,
-    #                       # keyword arguments for building the dataset
-    #                       dataset_kwargs=dict(max_samples=None, distribution=None, max_percentile=50, min_percentile=0),
-    #                       # keyword arguments for building the exact oracle
-    #                       oracle_kwargs=dict(noise_std=0.0)
-    #                       )
 
 import numpy as np
+import pandas as pd
+import tensorflow as tf
 import pytorch_lightning as pl
+import pickle as pkl
 
 import torch
 from torch.utils.data import Dataset, DataLoader
 
 from nets import DiffusionTest, DiffusionScore
 from util import TASKNAME2TASK, configure_gpu, set_seed, get_weights
+# from forward import ForwardModel
 
 args_filename = "args.json"
 checkpoint_dir = "checkpoints"
@@ -362,7 +328,7 @@ def run_evaluate(
             dropout_p=args.dropout_p)
 
     target_model = DiffusionScore.load_from_checkpoint(
-        checkpoint_path=target_checkpoint_path,
+        checkpoint_path=checkpoint_path,
         taskname=taskname,
         task=task,
         learning_rate=args.learning_rate,
@@ -492,7 +458,7 @@ def run_evaluate(
         t_prop = args.t
 
         t_ = torch.tensor([t_prop]).expand(num_samples).view(-1, 1).to(device)
-        x_hat, target, std, g = model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
+        # x_hat, target, std, g = model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
         # xs = [x_hat]
         # Denoise again
 
@@ -504,7 +470,11 @@ def run_evaluate(
         y_std = np.std(target_y)
         print(y_[0])
         print(y_max, y_mean, y_std)
-        y_ = torch.ones(num_samples).to(device) * y_max * 1
+        y_ = torch.ones(num_samples).to(device) * 1.5
+
+        xs_base = [torch.asarray(target_x[:num_samples], device=device)]
+        xs_base = xs_base[-1]
+        x_hat, target, std, g = model.gen_sde.base_sde.sample(t_, xs_base, return_noise=True)  # Add noise
 
         xs = heun_sampler(target_model,
                           x_hat,
@@ -544,7 +514,7 @@ def run_evaluate(
                     ys = task.denormalize_y(ys)
                 else:
                     print("none")
-                dic2y = np.load("npy/dic2y_new.npy", allow_pickle=True).item()
+                dic2y = np.load("npy/dic2y.npy", allow_pickle=True).item()
                 y_min, y_max = dic2y[TASKNAME2TASK[taskname]]
                 max_v = (np.max(ys) - y_min) / (y_max - y_min)
                 med_v = (np.median(ys) - y_min) / (y_max - y_min)
@@ -833,32 +803,12 @@ if __name__ == "__main__":
             checkpoint_path = os.path.join(
                 "experiments/nas/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
             args.target_checkpoint_path = os.path.join(
-                "experiments/nas/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
+                "experiments/nas/score_diffusion/123/wandb/target_grad_pred_1e-2/files/checkpoints/last.ckpt")
         elif args.task == "hopper":
             checkpoint_path = os.path.join(
                 "experiments/hopper/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
             args.target_checkpoint_path = os.path.join(
                 "experiments/hopper/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
-        elif args.task == "rosenbrock":
-            checkpoint_path = os.path.join(
-                "experiments/rosenbrock/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
-            args.target_checkpoint_path = os.path.join(
-                "experiments/rosenbrock/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
-        elif args.task == "rastrigin":
-            checkpoint_path = os.path.join(
-                "experiments/rastrigin/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
-            args.target_checkpoint_path = os.path.join(
-                "experiments/rastrigin/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
-        elif args.task == "levy":
-            checkpoint_path = os.path.join(
-                "experiments/levy/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
-            args.target_checkpoint_path = os.path.join(
-                "experiments/levy/score_diffusion/123/wandb/target_grad_pred/files/checkpoints/last.ckpt")
-        elif args.task == "rnabind":
-            checkpoint_path = os.path.join(
-                "experiments/rnabind/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
-            args.target_checkpoint_path = os.path.join(
-                "experiments/rnabind/score_diffusion/123/wandb/source/files/checkpoints/last.ckpt")
         run_evaluate(taskname=args.task,
                      seed=args.seed,
                      hidden_size=args.hidden_size,
