@@ -1,6 +1,8 @@
 
 
 # Design Editing for Offline Model-based Optimization 
+This repository contains the official implementation for the paper [**"Design Editing for Offline Model-based Optimization"**](https://openreview.net/forum?id=fF1KXgAhKN), which is accepted by **ICLR 2025 Workshop on Deep Generative Model in Machine Learning: Theory, Principle and Efficacy**. See below for more details.
+
   
 ## Install dependencies  
 **Install MujoCo and mujoco-py**  
@@ -135,4 +137,16 @@ bash run_edit.sh
 **Run evaluation on different seeds**
 ```bash  
 bash run_edit_seed.sh
+```
+
+## Citation
+Please cite our paper if you find it is useful in your research:
+```bibtex
+@inproceedings{yuan2025design,
+	title={Design Editing for Offline Model-based Optimization},
+	author={Ye Yuan and Youyuan Zhang and Can Chen and Haolun Wu and Melody Zixuan Li and Jianmo Li and James J. Clark and Xue Liu},
+	booktitle={ICLR 2025 Workshop on Deep Generative Model in Machine Learning: Theory, Principle and Efficacy},
+	year={2025},
+	url={https://openreview.net/forum?id=fF1KXgAhKN}
+}
 ```
