@@ -1,7 +1,7 @@
 
 
 # Design Editing for Offline Model-based Optimization 
-This repository contains the official implementation for the paper [**"Design Editing for Offline Model-based Optimization"**](https://openreview.net/forum?id=fF1KXgAhKN), which is accepted by **ICLR 2025 Workshop on Deep Generative Model in Machine Learning: Theory, Principle and Efficacy**. See below for more details.
+This repository contains the official implementation for the paper **"Design Editing for Offline Model-based Optimization"**, which is accepted by [**Transactions on Machine Learning Research (TMLR) 2025**](https://openreview.net/forum?id=OPFnpl7KiF) and [**ICLR 2025 Workshop on Deep Generative Model in Machine Learning: Theory, Principle and Efficacy**]((https://openreview.net/forum?id=fF1KXgAhKN)). See below for more details.
 
   
 ## Install dependencies  
