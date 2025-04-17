@@ -142,6 +142,18 @@ bash run_edit_seed.sh
 ## Citation
 Please cite our paper if you find it is useful in your research:
 ```bibtex
+@article{yuan2025design,
+	title={Design Editing for Offline Model-based Optimization},
+	author={Ye Yuan and Youyuan Zhang and Can Chen and Haolun Wu and Melody Zixuan Li and Jianmo Li and James J. Clark and Xue Liu},
+	journal={Transactions on Machine Learning Research},
+	issn={2835-8856},
+	year={2025},
+	url={https://openreview.net/forum?id=OPFnpl7KiF},
+	note={}
+}
+```
+
+```bibtex
 @inproceedings{yuan2025design,
 	title={Design Editing for Offline Model-based Optimization},
 	author={Ye Yuan and Youyuan Zhang and Can Chen and Haolun Wu and Melody Zixuan Li and Jianmo Li and James J. Clark and Xue Liu},
